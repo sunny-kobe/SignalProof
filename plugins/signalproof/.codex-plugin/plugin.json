@@ -1,0 +1,6 @@
+{
+  "name": "signalproof",
+  "version": "0.1.0",
+  "description": "Codex 优先的信号到资产证明协议，包含工具覆盖和流程自检。",
+  "skills": "./skills/"
+}

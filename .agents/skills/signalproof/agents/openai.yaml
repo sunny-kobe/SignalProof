@@ -1,0 +1,13 @@
+interface:
+  display_name: "SignalProof"
+  short_description: "在本仓库运行和审计信号到资产证明案例。"
+  brand_color: "#2563EB"
+  default_prompt: "用 SignalProof 协议处理这个信号，并更新 vault。"
+dependencies:
+  tools:
+    - type: "skill"
+      value: "last30days"
+      description: "研究阶段使用的最近公开讨论和来源覆盖。"
+    - type: "skill"
+      value: "browser:control-in-app-browser"
+      description: "本地浏览器预览和报告验收。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SignalProof"
+  short_description: "信号到资产证明案例工作流。"
+  brand_color: "#2563EB"

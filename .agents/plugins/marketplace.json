@@ -1,0 +1,17 @@
+{
+  "name": "signalproof-local",
+  "plugins": [
+    {
+      "name": "signalproof",
+      "source": {
+        "source": "local",
+        "path": "../../plugins/signalproof"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "个人工作流"
+    }
+  ]
+}

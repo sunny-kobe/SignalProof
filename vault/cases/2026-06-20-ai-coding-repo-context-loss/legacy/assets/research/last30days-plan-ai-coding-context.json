@@ -1,0 +1,35 @@
+{
+  "intent": "concept",
+  "freshness_mode": "balanced_recent",
+  "cluster_mode": "debate",
+  "subqueries": [
+    {
+      "label": "primary",
+      "search_query": "AI coding repo context AGENTS.md Claude Code memory Codex",
+      "ranking_query": "What are developers saying about repository context, AGENTS.md, Claude Code memory, and Codex project instructions for AI coding?",
+      "sources": ["reddit", "x", "youtube", "tiktok", "instagram", "hackernews", "polymarket"],
+      "weight": 1.0
+    },
+    {
+      "label": "failure_modes",
+      "search_query": "AI coding agent wrong repo context ignores conventions",
+      "ranking_query": "What concrete complaints do developers have about AI coding agents ignoring project conventions, APIs, file structure, or repo context?",
+      "sources": ["reddit", "x", "hackernews", "youtube"],
+      "weight": 0.85
+    },
+    {
+      "label": "context_files",
+      "search_query": "AGENTS.md CLAUDE.md repo instructions coding agents",
+      "ranking_query": "How are developers using AGENTS.md, CLAUDE.md, or repo instruction files to steer coding agents, and what limitations are discussed?",
+      "sources": ["reddit", "x", "hackernews", "youtube", "github"],
+      "weight": 0.8
+    },
+    {
+      "label": "audit_workflow",
+      "search_query": "AI coding workflow context checklist repo audit",
+      "ranking_query": "Is there evidence that developers want checklists, audits, templates, or workflows to improve AI coding agent behavior in real repositories?",
+      "sources": ["reddit", "x", "hackernews", "youtube", "github"],
+      "weight": 0.7
+    }
+  ]
+}
