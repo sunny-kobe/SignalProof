@@ -46,7 +46,7 @@ Safari cookie read permission denied。如果需要浏览器 cookie 抽取，需
 
 跳过相关能力时，必须在 `tool-ledger.md` 记录原因。
 
-更细的阶段接入计划见 [`docs/codex-plugin-flow.md`](codex-plugin-flow.md)。也可以运行：
+更细的阶段接入计划见 [`docs/codex-plugin-flow.md`](codex-plugin-flow.md)，全量插件清单和优先级审计见 [`docs/codex-plugin-audit.md`](codex-plugin-audit.md)。也可以运行：
 
 ```bash
 python3 scripts/signalproof.py capabilities
