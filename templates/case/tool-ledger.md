@@ -21,6 +21,28 @@ gate: passed
 | Hooks | 中 | 否 | 弱 | 可用于强制 check-case。 | 后续加入。 |
 | Automation | 中 | 否 | 弱 | 可用于 72h 反馈复查。 | 等发布渠道恢复后启用。 |
 
+## 阶段能力计划
+
+运行：
+
+```bash
+python3 scripts/signalproof.py capabilities
+```
+
+然后把本 case 各阶段真正考虑过的 Codex 自带插件记录到这里：
+
+| 阶段 | 候选 Codex 插件 | 是否使用 | 结果质量 | 跳过或失败原因 | 下一步 |
+| --- | --- | --- | --- | --- | --- |
+| signal | Browser / Chrome / Record & Replay | 待定 | 待定 | 待定 | 待定 |
+| research | Browser / Chrome / Documents / PDF / Spreadsheets / Data Visualization | 待定 | 待定 | 待定 | 待定 |
+| debate | Browser / Chrome / Documents / PDF | 待定 | 待定 | 待定 | 待定 |
+| validation | Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 待定 | 待定 | 待定 | 待定 |
+| artifact | Documents / PDF / Spreadsheets / Presentations / HyperFrames / Data Visualization | 待定 | 待定 | 待定 | 待定 |
+| publication | Browser / Chrome | 待定 | 待定 | 待定 | 待定 |
+| feedback | Chrome / Browser / Spreadsheets / Record & Replay | 待定 | 待定 | 待定 | 待定 |
+| asset | Documents / PDF / Spreadsheets / Presentations / Record & Replay / Browser | 待定 | 待定 | 待定 | 待定 |
+| flow-review | Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 待定 | 待定 | 待定 | 待定 |
+
 ## 能力结论
 
 本 case 的工具使用足够支持内部协议验证，但不能支持外部市场判断。

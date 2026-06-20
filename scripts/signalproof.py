@@ -25,6 +25,7 @@ REPORTS = VAULT / "reports"
 RUNS = VAULT / "runs"
 TEMPLATES = ROOT / "templates" / "case"
 LAST30DAYS = Path("/Users/rust/.agents/skills/last30days/scripts/last30days.py")
+PLUGIN_CACHE = Path("/Users/rust/.codex/plugins/cache")
 
 REQUIRED_FILES = [
     "signal.md",
@@ -64,7 +65,13 @@ SECTIONS = [
 TOOL_LEDGER_TERMS = {
     "last30days": [r"last30days"],
     "Browser": [r"Browser", r"浏览器"],
+    "Chrome": [r"Chrome"],
     "Computer Use": [r"Computer Use", r"电脑控制", r"计算机控制"],
+    "Record & Replay": [r"Record & Replay", r"Record and Replay", r"录制"],
+    "Documents": [r"Documents", r"DOCX", r"文档"],
+    "PDF": [r"PDF"],
+    "Spreadsheets": [r"Spreadsheets", r"Sheets", r"表格"],
+    "Presentations": [r"Presentations", r"Slides", r"演示文稿"],
     "Skill": [r"Skill", r"技能"],
     "Plugin": [r"Plugin", r"插件"],
     "MCP": [r"MCP"],
@@ -77,6 +84,110 @@ PROCESS_TERMS = {
     "Self-check": [r"Self-check", r"自检"],
     "Optimization": [r"Optimization", r"优化"],
 }
+
+BUILTIN_PLUGIN_SPECS = [
+    ("Browser", "openai-bundled/browser/*/skills/control-in-app-browser/SKILL.md"),
+    ("Chrome", "openai-bundled/chrome/*/skills/control-chrome/SKILL.md"),
+    ("Computer Use", "openai-bundled/computer-use/*/skills/computer-use/SKILL.md"),
+    ("Record & Replay", "openai-bundled/record-and-replay/*/skills/record-and-replay/SKILL.md"),
+    ("Documents", "openai-primary-runtime/documents/*/skills/documents/SKILL.md"),
+    ("PDF", "openai-primary-runtime/pdf/*/skills/pdf/SKILL.md"),
+    ("Spreadsheets", "openai-primary-runtime/spreadsheets/*/skills/spreadsheets/SKILL.md"),
+    ("Presentations", "openai-primary-runtime/presentations/*/skills/presentations/SKILL.md"),
+    ("Data Visualization", "openai-api-curated/build-web-data-visualization/*/.codex-plugin/plugin.json"),
+    ("HyperFrames", "openai-api-curated/hyperframes/*/.codex-plugin/plugin.json"),
+]
+
+STAGE_CAPABILITY_MATRIX = [
+    {
+        "stage": "signal",
+        "purpose": "捕捉信号，建立 case 边界。",
+        "default_capabilities": "SignalProof skill、Codex 线程工具、本地文件系统。",
+        "codex_plugins": "Browser 读取公开 URL；Chrome 读取用户已登录页面；Record & Replay 录制用户演示的真实工作流。",
+        "use_when": "信号来自网页、已登录产品、用户演示或另一个 Codex 线程。",
+        "write_to": "signal.md、process-log.md、tool-ledger.md",
+    },
+    {
+        "stage": "research",
+        "purpose": "收集证据，区分事实、推断和缺口。",
+        "default_capabilities": "last30days、Web/Search、GitHub/HN/RSS、官方文档。",
+        "codex_plugins": "Browser 验证公开页面；Chrome 读取登录态页面；PDF/Documents/Spreadsheets 读取外部资料；Data Visualization 仅在需要看数据结构时使用。",
+        "use_when": "信息时效性强、来源需要登录、资料是 PDF/DOCX/表格，或证据需要可视化判断。",
+        "write_to": "research.md、vault/assets/research/、tool-ledger.md",
+    },
+    {
+        "stage": "debate",
+        "purpose": "做正反方和反方审查，暴露风险。",
+        "default_capabilities": "Codex 子线程、反方 prompt、本地证据包。",
+        "codex_plugins": "Browser/Chrome 复核关键反证；PDF/Documents 读取长文档反证。",
+        "use_when": "关键反对意见依赖外部页面、登录态页面或长文档证据。",
+        "write_to": "debate.md、subtasks/index.md、tool-ledger.md",
+    },
+    {
+        "stage": "thesis",
+        "purpose": "给出继续、收窄、暂停或放弃判断。",
+        "default_capabilities": "本地 case 文件、自检脚本、用户判断。",
+        "codex_plugins": "通常不需要；只在关键判断缺证据时回到 research/debate 阶段补用。",
+        "use_when": "判断依赖未核验证据或需要补查事实。",
+        "write_to": "thesis.md、decision.md 草稿、flow-review.md",
+    },
+    {
+        "stage": "validation",
+        "purpose": "把机会压成可验证实验并验收产物。",
+        "default_capabilities": "本地脚本、case 自检、文件级检查。",
+        "codex_plugins": "Browser 验收 HTML/本地 Web；Computer Use 验收只能 GUI 操作的流程；PDF/Documents/Spreadsheets/Presentations 验收对应文件产物。",
+        "use_when": "产物有界面、GUI、文档、表格、演示文稿或 PDF 布局质量要求。",
+        "write_to": "validation.md、flow-review.md、tool-ledger.md",
+    },
+    {
+        "stage": "artifact",
+        "purpose": "生成公开产物或内部可复用产物。",
+        "default_capabilities": "Codex 文件编辑、Git/GitHub CLI、本地脚本。",
+        "codex_plugins": "Documents 做 DOCX/文档；PDF 做 PDF；Spreadsheets 做表格；Presentations 做 deck；HyperFrames 做网页视频/视觉叙事；Data Visualization 做数据图表。",
+        "use_when": "产物格式不是纯 Markdown，或需要可视化、排版、演示、表格、视频化表达。",
+        "write_to": "artifact.md、asset.md、vault/assets/",
+    },
+    {
+        "stage": "publication",
+        "purpose": "发布触达，但不伪造真实反馈。",
+        "default_capabilities": "GitHub CLI、发布台账、本地文案。",
+        "codex_plugins": "Browser 验证公开发布页；Chrome 在用户明确授权时使用登录态发布/查看数据。",
+        "use_when": "需要确认公开 URL、截图、登录态后台或用户授权的渠道操作。",
+        "write_to": "feedback.md、day2-execution.md、tool-ledger.md",
+    },
+    {
+        "stage": "feedback",
+        "purpose": "回收真实反馈和指标，区分 published 与 validated。",
+        "default_capabilities": "GitHub CLI、last30days、人工反馈输入。",
+        "codex_plugins": "Chrome 查看登录态评论/私信/后台；Browser 验证公开评论；Spreadsheets 统计反馈；Record & Replay 沉淀用户示范流程。",
+        "use_when": "反馈来自登录态渠道、公开页面、表格数据，或用户用操作演示真实任务。",
+        "write_to": "feedback.md、vault/assets/feedback/、tool-ledger.md",
+    },
+    {
+        "stage": "decision",
+        "purpose": "做继续、收窄、暂停、放弃或资产化决策。",
+        "default_capabilities": "本地 case 文件、check-all、check-goal。",
+        "codex_plugins": "通常不需要；缺少证据时回退到 research/feedback 补用插件。",
+        "use_when": "决策依赖未核验反馈、指标或产物验收。",
+        "write_to": "decision.md、flow-review.md",
+    },
+    {
+        "stage": "asset",
+        "purpose": "把有效产物沉淀成可复用资产。",
+        "default_capabilities": "Markdown 模板、脚本、GitHub repo、Codex skill/plugin。",
+        "codex_plugins": "Documents/PDF/Spreadsheets/Presentations 做资料包；Record & Replay 把用户流程变成 Skill；Browser 验收发布后的资产页。",
+        "use_when": "资产需要变成文档、PDF、表格、PPT、可录制流程或公开页面。",
+        "write_to": "asset.md、vault/assets/、plugins/、.agents/skills/",
+    },
+    {
+        "stage": "flow-review",
+        "purpose": "审计阶段完整性、工具覆盖和下一轮优化。",
+        "default_capabilities": "check-all、check-goal、capabilities、export-all。",
+        "codex_plugins": "Browser 预览报告索引；Computer Use 复核 GUI-only 验收；PDF/Documents/Spreadsheets/Presentations 复核格式产物。",
+        "use_when": "需要证明报告可读、界面可用、文件格式正确或 GUI 流程真实可跑。",
+        "write_to": "flow-review.md、tool-ledger.md、vault/runs/",
+    },
+]
 
 
 @dataclass
@@ -193,6 +304,52 @@ def diagnose(_: argparse.Namespace | None = None) -> int:
 
     write_text(RUNS / f"{date.today().isoformat()}-capability-snapshot.json", json.dumps(result, indent=2, ensure_ascii=False))
     print(json.dumps(result, indent=2, ensure_ascii=False))
+    return 0
+
+
+def detect_builtin_plugins() -> dict[str, dict[str, object]]:
+    detected: dict[str, dict[str, object]] = {}
+    for name, pattern in BUILTIN_PLUGIN_SPECS:
+        matches = sorted(PLUGIN_CACHE.glob(pattern))
+        detected[name] = {
+            "available": bool(matches),
+            "path": str(matches[-1]) if matches else None,
+        }
+    return detected
+
+
+def capability_matrix(_: argparse.Namespace | None = None) -> int:
+    detected = detect_builtin_plugins()
+    lines = [
+        "# SignalProof Codex 能力矩阵",
+        "",
+        f"生成日期：{date.today().isoformat()}",
+        "",
+        "## Codex 自带插件可用性",
+        "",
+        "| 插件 | 状态 | 本机路径 |",
+        "| --- | --- | --- |",
+    ]
+    for name, info in detected.items():
+        status = "available" if info["available"] else "missing"
+        path = info["path"] or ""
+        lines.append(f"| {name} | {status} | `{path}` |")
+    lines.extend([
+        "",
+        "## 阶段能力计划",
+        "",
+        "| 阶段 | 目标 | 默认能力 | Codex 自带插件候选 | 何时使用 | 写入位置 |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ])
+    for row in STAGE_CAPABILITY_MATRIX:
+        lines.append(
+            "| {stage} | {purpose} | {default_capabilities} | {codex_plugins} | {use_when} | {write_to} |".format(
+                **row
+            )
+        )
+    text = "\n".join(lines) + "\n"
+    write_text(RUNS / f"{date.today().isoformat()}-codex-capability-matrix.md", text)
+    print(text)
     return 0
 
 
@@ -412,6 +569,10 @@ def check_goal(args: argparse.Namespace) -> int:
         errors.extend(html_errors)
     if not (RUNS / f"{date.today().isoformat()}-capability-snapshot.json").exists():
         errors.append("missing today's capability snapshot; run diagnose")
+    if not (RUNS / f"{date.today().isoformat()}-codex-capability-matrix.md").exists():
+        errors.append("missing today's Codex capability matrix; run capabilities")
+    if not (ROOT / "docs" / "codex-plugin-flow.md").exists():
+        errors.append("missing docs/codex-plugin-flow.md")
     legacy_dir = CASES / "2026-06-20-ai-coding-repo-context-loss" / "legacy"
     if not legacy_dir.exists() or not any(legacy_dir.iterdir()):
         errors.append("missing migrated legacy artifacts under ai-coding case")
@@ -527,6 +688,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("diagnose", help="Record local capability snapshot.").set_defaults(func=diagnose)
+    sub.add_parser("capabilities", help="Print the stage-to-Codex-plugin capability matrix.").set_defaults(func=capability_matrix)
     sub.add_parser("list", help="List cases.").set_defaults(func=list_cases)
     sub.add_parser("check-all", help="Check all cases.").set_defaults(func=check_all)
     sub.add_parser("export-all", help="Export all case reports.").set_defaults(func=export_all)

@@ -43,4 +43,6 @@ python3 scripts/signalproof.py export-all
 - 阶段完成前，先记录候选 skill、plugin 和工具。
 - 判断工具结果质量，而不是只记录工具是否调用过。
 - 产物本地优先，并且保持中文可读。
-- Browser 和 Computer Use 是候选验收能力，不是默认依赖。
+- Browser、Chrome、Computer Use、Record & Replay、Documents、PDF、Spreadsheets、Presentations 是候选能力，不是默认依赖。
+- 每个 case 开始前可运行 `python3 scripts/signalproof.py capabilities`，查看阶段到 Codex 自带插件的能力矩阵。
+- 只有当插件能改变判断、减少不确定性或验收产物时才调用；跳过或失败都要写入 `tool-ledger.md`。

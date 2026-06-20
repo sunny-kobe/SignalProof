@@ -38,6 +38,7 @@ plugins/signalproof/           Codex 插件草案包
 
 ```bash
 python3 scripts/signalproof.py diagnose
+python3 scripts/signalproof.py capabilities
 python3 scripts/signalproof.py list
 python3 scripts/signalproof.py check-all
 python3 scripts/signalproof.py export-all
@@ -48,3 +49,8 @@ python3 scripts/signalproof.py export-all
 ## 当前边界
 
 这个仓库能证明内部协议闭环已经跑通。只有收集到真实发布、真实用户反馈和真实 before/after 证据后，才能进入市场验证判断。
+
+## 流程说明
+
+- 当前执行流程：[docs/current-flow.md](docs/current-flow.md)
+- Codex 自带插件接入计划：[docs/codex-plugin-flow.md](docs/codex-plugin-flow.md)

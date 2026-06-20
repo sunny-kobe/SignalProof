@@ -39,6 +39,7 @@ python3 scripts/signalproof.py export-all
 
 ```bash
 python3 scripts/signalproof.py diagnose
+python3 scripts/signalproof.py capabilities
 ```
 
 运行 `last30days` 时使用较新的 Python：
@@ -53,3 +54,4 @@ python3.14 /Users/rust/.agents/skills/last30days/scripts/last30days.py --diagnos
 - synthetic demo、假设反馈和内部流程反馈不能写成市场验证。
 - 弱证据只能支持低成本内部实验，不能支持产品化或 SaaS 结论。
 - 调用了工具不等于证据合格，`tool-ledger.md` 必须判断工具结果是否真的有用。
+- Codex 自带插件接入按 `docs/codex-plugin-flow.md` 执行；不要默认全跑插件。
