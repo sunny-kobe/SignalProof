@@ -55,7 +55,31 @@ python3 scripts/signalproof.py capabilities
 - 只在能改变判断、减少不确定性或验收产物时调用；
 - 使用、跳过、失败都写入 `tool-ledger.md`。
 
-## 3. 创建 Case
+## 3. 插件实际调用循环
+
+能力矩阵之后，不能直接假设插件可用。每个需要插件参与的案例，都按下面顺序跑：
+
+1. 选择一个会改变判断、减少不确定性或验收产物的插件；
+2. 读取对应插件 skill；
+3. 按插件推荐入口实际调用；
+4. 记录原始结果、错误信息和结果质量；
+5. 如果失败，先写入 `tool-ledger.md`，再选择降级路径；
+6. 在 `flow-review.md` 写明下次优化。
+
+本轮实测结果：
+
+- Browser 插件按真实接入流程调用失败，错误为 `codex/sandbox-state-meta: missing field sandboxPolicy`；
+- Computer Use 插件 `list_apps` 成功；
+- Computer Use 插件 `get_app_state` 成功读取 Google Chrome 的 GitHub 仓库页面；
+- Chrome 插件本身未直接调用，本次 Chrome 只是 Computer Use 读取的目标应用。
+
+当前边界：
+
+- 插件文件存在不等于真实可用；
+- Computer Use 成功不等于 Browser 页面级验收完成；
+- 插件失败是流程证据，不能被降级路径覆盖掉。
+
+## 4. 创建 Case
 
 命令：
 
@@ -65,7 +89,7 @@ python3 scripts/signalproof.py init-case "<title>"
 
 作用：
 
-- 从 `templates/case/` 创建完整 case 文件；
+- 从 `templates/case/` 创建完整案例文件；
 - 必需文件包括 `signal.md`、`research.md`、`debate.md`、`thesis.md`、`validation.md`、`artifact.md`、`feedback.md`、`decision.md`、`asset.md`、`flow-review.md`、`tool-ledger.md`、`process-log.md`、`report.md`。
 
 当前边界：
@@ -73,7 +97,7 @@ python3 scripts/signalproof.py init-case "<title>"
 - `init-case` 只生成结构，不自动判断证据；
 - 是否调用插件由阶段能力计划决定。
 
-## 4. Seed 示例案例
+## 5. Seed 示例案例
 
 命令：
 
@@ -90,9 +114,9 @@ python3 scripts/seed_cases.py
 当前边界：
 
 - seed 只证明内部协议闭环，不证明市场需求。
-- seed 内容会覆盖对应 case 的顶层文件，不覆盖 legacy 目录。
+- seed 内容会覆盖对应案例的顶层文件，不覆盖 legacy 目录。
 
-## 5. Case 自检
+## 6. Case 自检
 
 命令：
 
@@ -112,7 +136,7 @@ python3 scripts/signalproof.py check-all
 - 它是结构和风险语言检查；
 - 不替代真实市场验证。
 
-## 6. 导出报告
+## 7. 导出报告
 
 命令：
 
@@ -122,7 +146,7 @@ python3 scripts/signalproof.py export-all
 
 作用：
 
-- 把每个 case 导出到 `vault/reports/*.md`；
+- 把每个案例导出到 `vault/reports/*.md`；
 - 生成 `vault/reports/index.md` 和 `vault/reports/index.html`。
 
 当前边界：
@@ -130,7 +154,7 @@ python3 scripts/signalproof.py export-all
 - HTML 报告索引可以用 Browser 验收；
 - 当前脚本只做文件级导出，不做视觉渲染判断。
 
-## 7. MVP 目标检查
+## 8. MVP 目标检查
 
 命令：
 
@@ -140,13 +164,13 @@ python3 scripts/signalproof.py check-goal --min-cases 5
 
 作用：
 
-- 检查至少 5 个 case；
+- 检查至少 5 个案例；
 - 检查报告索引；
 - 检查能力快照；
 - 检查 Codex 能力矩阵；
 - 检查 legacy 迁移；
 - 检查插件 marketplace；
-- 检查每个 case 的反馈边界、工具账本和优化记录。
+- 检查每个案例的反馈边界、工具账本和优化记录。
 
 当前边界：
 
@@ -155,8 +179,9 @@ python3 scripts/signalproof.py check-goal --min-cases 5
 
 ## 下一步增量
 
-下一步不应该一次性接入所有插件，而是选一个真实 case 做单点验证：
+下一步不应该一次性接入所有插件，而是继续做单点验证：
 
-1. 用 Browser 验收 `vault/reports/index.html`；
-2. 把结果写回 `flow-review.md` 和 `tool-ledger.md`；
-3. 再考虑 Documents/PDF/Spreadsheets/Presentations 这类产物插件。
+1. 修复或复查 Browser 插件 `sandboxPolicy` 字段问题；
+2. 用 Browser 或 Computer Use 验收 `vault/reports/index.html`；
+3. 把页面级验收结果写回 `flow-review.md` 和 `tool-ledger.md`；
+4. 再考虑 Documents/PDF/Spreadsheets/Presentations 这类产物插件。
