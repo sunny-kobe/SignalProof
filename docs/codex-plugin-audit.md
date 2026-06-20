@@ -1,6 +1,7 @@
 # Codex 插件逐个适配审计
 
 生成日期：2026-06-20
+更新日期：2026-06-21
 
 ## 说明
 
@@ -18,7 +19,7 @@
 - `codex plugin list`：当前插件市场安装状态。
 - 插件清单文件：类别、描述、能力形态和授权策略。
 - `/Users/rust/.codex/plugins/cache`：本机缓存和运行时插件。
-- 当前会话工具：Computer Use 已实测成功；Record & Replay 的 `event_stream_status` 已实测可见；Browser 上轮实测失败。
+- 当前会话工具：Computer Use 已实测成功但插件市场当前显示未安装；Record & Replay 的 `event_stream_status` 已实测可见但插件市场当前显示未安装；Browser 上轮实测失败。
 - 最新 Codex 官方手册：插件可打包技能、应用集成和 MCP 服务器。
 
 ## 状态总览
@@ -28,9 +29,9 @@
 | openai-bundled 插件市场 | 5 |
 | openai-curated 插件市场 | 173 |
 | 插件市场合计 | 178 |
-| 已安装启用 | 3 |
+| 已安装启用 | 2 |
 | 已安装未启用 | 0 |
-| 未安装 | 175 |
+| 未安装 | 176 |
 
 | 适合度 | 数量 |
 | --- | ---: |
@@ -66,8 +67,8 @@
 
 | 类型 | 插件 | 当前判断 |
 | --- | --- | --- |
-| 已安装启用 | `browser`、`chrome`、`computer-use` | `computer-use` 已实测成功；`browser` 上轮失败需复查；`chrome` 适合登录态页面但本轮未直接调用。 |
-| 插件市场未安装但会话工具可见 | `record-and-replay` | `event_stream_status` 已返回可用状态，可先作为会话工具试跑，再决定是否补装插件。 |
+| 已安装启用 | `browser`、`chrome` | `browser` 上轮失败需复查；`chrome` 适合登录态页面但本轮未直接调用。 |
+| 插件市场未安装但会话工具可见 | `computer-use`、`record-and-replay` | `computer-use` 当前会话工具曾实测成功；`record-and-replay` 的 `event_stream_status` 已返回可用状态。两者都要按“会话工具可见”记录，不能写成插件市场已安装。 |
 | 第一批调研插件 | `readwise`、`zotero`、`scite`、`semrush`、`similarweb`、`brand24` | 适合补历史阅读、论文、反证、关键词、竞品流量和公开讨论。 |
 | 第一批反馈/验证插件 | `dovetail`、`posthog`、`mixpanel`、`amplitude`、`github`、`sentry`、`datadog` | 适合用户原话、行为数据、开源反馈、错误和运行态证据。 |
 | 第一批产物插件 | `documents`、`pdf`、`spreadsheets`、`presentations`、`build-web-data-visualization`、`hyperframes`、`canva`、`figma` | 适合把 Markdown 案例变成文档、表格、演示稿、可视化、视频和内容素材。 |
@@ -155,7 +156,7 @@
 | `chrome` | 已安装启用 | 技能 | A 默认候选 | 调研、发布、反馈 | 适合依赖本机登录态的页面、后台、GitHub/Lark/社群反馈检查；不要用公共网页搜索替代授权页面。 | 用户明确需要登录态、cookie、现有标签页或扩展状态时。 | 读取一个已登录页面并记录可见证据；若不能直接调用则用 Computer Use 降级。 |
 | `clickup` | 未安装 | 应用集成 | C 低频备用 | 资料、反馈、资产 | 偏知识库、文件、项目管理或反馈沉淀；价值取决于你是否已有授权数据。 | 资料或反馈实际在这个系统里。 | 读取/创建一条记录并映射到 SignalProof 案例。 |
 | `common-room` | 未安装 | 应用集成 | B 条件试点 | 社区/买方情报 | 适合社区和买方信号，若有账号可用于反馈。 | 需要看开发者社区/潜在线索。 | 查询一个社区主题。 |
-| `computer-use` | 已安装启用 | 技能、MCP | A 默认候选 | 验证、流程自检 | 适合控制本机图形界面，上一轮已成功读取 Chrome 状态，是当前可用验证插件之一。 | 需要检查桌面应用、浏览器窗口、文件预览或非网页 UI 时。 | 再次读取目标 App 状态，记录截图/可访问性树摘要。 |
+| `computer-use` | 未安装/当前会话工具可见 | 技能、MCP | A 默认候选 | 验证、流程自检 | 插件市场当前显示未安装，但当前会话曾成功读取 Chrome 状态；适合控制本机图形界面，是验证类能力的优先候选。 | 需要检查桌面应用、浏览器窗口、文件预览或非网页 UI 时。 | 再次读取目标 App 状态，记录截图/可访问性树摘要。 |
 | `conductor` | 未安装 | 应用集成 | B 条件试点 | SEO/品牌可见性 | 适合品牌可见性和搜索表现。 | 验证公开内容是否获得搜索可见性。 | 查询一个关键词表现。 |
 | `coveo` | 未安装 | 应用集成 | B 条件试点 | 资料、反馈、资产 | 偏知识库、文件、项目管理或反馈沉淀；价值取决于你是否已有授权数据。 | 资料或反馈实际在这个系统里。 | 读取/创建一条记录并映射到 SignalProof 案例。 |
 | `datasite` | 未安装 | 应用集成 | D 暂不纳入 | 交易资料室 | 交易资料室/尽调偏企业金融，不纳入。 | 并购尽调案例。 | 暂不安装。 |
