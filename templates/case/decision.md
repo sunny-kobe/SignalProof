@@ -10,7 +10,7 @@ gate: passed
 
 ## 决策
 
-继续内部协议验证。
+{{decision_default}}
 
 ## 理由
 

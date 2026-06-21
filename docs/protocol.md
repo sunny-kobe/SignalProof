@@ -24,6 +24,16 @@ SignalProof = 协议、模板、vault、脚本、能力账本
 9. 把有效输出沉淀成可复用资产。
 10. 做流程自检并更新工具账本。
 
+## Case 类型
+
+默认 case 类型是 `external-opportunity`，用于真实机会验证。内部流程审计、工作流优化、插件流程复核和二次审视类任务使用：
+
+```bash
+python3 scripts/signalproof.py init-case "<标题>" --case-type internal-audit
+```
+
+`internal-audit` 只能支持本地机制改进和流程决策，不能写成外部市场验证。它的证据重点是 `AGENTS.md`、repo skill、`docs/`、`templates/`、`scripts/`、`vault/cases/` 和 `vault/runs/` 是否真的改变。
+
 ## Gate 状态
 
 ```text
@@ -42,6 +52,16 @@ not-started / running / weak / passed / blocked
 - 结论许可：继续研究、低成本实验、暂停或放弃。
 
 如果研究证据只有 weak 或 blocked，后续只能进入补研究或低成本内部实验，不能写成真实需求成立。
+
+新 case 完成前建议运行严格检查：
+
+```bash
+python3 scripts/signalproof.py check-case <case-slug> --strict
+```
+
+严格检查会把 warning 也当成失败，用于防止新 case 把研究质量门缺口留给人工记忆。历史 case 可以继续由 `check-all` 保持 warning，以免一次性破坏旧材料。
+
+严格检查同时会识别未完成占位标记，例如 `TODO`、`TBD`、`待补`、`待定` 和未替换的 `{{变量}}`。这些标记可以出现在模板和历史材料中，但不能留在声称完成的新 case 里。
 
 ## 必需审计文件
 

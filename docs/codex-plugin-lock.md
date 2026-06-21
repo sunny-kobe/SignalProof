@@ -102,10 +102,35 @@ bash scripts/install-codex-plugins.sh
 ```bash
 python3 scripts/signalproof.py capabilities
 python3 scripts/signalproof.py plugin-status
+python3 scripts/signalproof.py check-plugin-drift
 python3 scripts/signalproof.py check-goal --min-cases 5
 ```
 
 5. 对需要真实数据的 app connector 重新登录授权。
+
+## 漂移检查
+
+每次插件或流程更新后，先运行：
+
+```bash
+python3 scripts/signalproof.py plugin-status
+python3 scripts/signalproof.py check-plugin-drift
+```
+
+`check-plugin-drift` 会比对四层：
+
+- `docs/codex-plugin-lock.md` 中的官方插件锁定清单；
+- `scripts/install-codex-plugins.sh` 中的安装清单；
+- 当天 `vault/runs/<date>-codex-plugin-status.md` 状态快照；
+- 当前 `codex plugin list` 的已安装启用项。
+
+如果只想检查 repo 文件和当天快照，不实时调用 Codex CLI，可以运行：
+
+```bash
+python3 scripts/signalproof.py check-plugin-drift --no-codex
+```
+
+这个检查只证明安装和记录没有漂移，不证明外部账号已授权，也不证明 connector 能读取真实数据。
 
 ## 更新规则
 

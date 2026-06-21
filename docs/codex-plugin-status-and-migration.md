@@ -122,6 +122,18 @@ python3 scripts/signalproof.py plugin-status
 vault/runs/<date>-codex-plugin-status.md
 ```
 
+检查插件锁定清单、安装脚本、当天状态快照和当前安装列表是否漂移：
+
+```bash
+python3 scripts/signalproof.py check-plugin-drift
+```
+
+如果当前环境不适合实时调用 Codex CLI，可只比较 repo 文件和当天状态快照：
+
+```bash
+python3 scripts/signalproof.py check-plugin-drift --no-codex
+```
+
 `check-goal` 已把这份快照纳入目标检查，所以后续流程文档不会只停留在口头判断。
 
 插件锁定清单和重装脚本：

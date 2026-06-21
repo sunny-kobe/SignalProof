@@ -11,6 +11,8 @@
 - [2026-06-20-codex-subthread-output-missing](2026-06-20-codex-subthread-output-missing.md)
 - [2026-06-20-research-tool-coverage-gap](2026-06-20-research-tool-coverage-gap.md)
 - [2026-06-21-codex-推荐插件真实试跑评估](2026-06-21-codex-推荐插件真实试跑评估.md)
+- [2026-06-21-signalproof-工作流优化二次审视](2026-06-21-signalproof-工作流优化二次审视.md)
+- [2026-06-21-signalproof-当前工作流自审](2026-06-21-signalproof-当前工作流自审.md)
 - [2026-06-21-插件试跑-case-1-ai-coding-repo-context-loss-调研验证](2026-06-21-插件试跑-case-1-ai-coding-repo-context-loss-调研验证.md)
 - [2026-06-21-插件试跑-case-2-signalproof-报告发布与验收](2026-06-21-插件试跑-case-2-signalproof-报告发布与验收.md)
 - [2026-06-21-插件试跑-case-3-插件评估产物资产化](2026-06-21-插件试跑-case-3-插件评估产物资产化.md)

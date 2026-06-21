@@ -1,7 +1,7 @@
 ---
 type: feedback
 status: skipped-real-feedback
-updated_at: {{created_at}}
+updated_at: 2026-06-21
 gate: weak
 ---
 
@@ -13,7 +13,7 @@ gate: weak
 
 ## 为什么为空
 
-{{feedback_empty_reason}}
+本 case 是内部流程优化，没有发布、访谈、公开评论或产品指标；真实反馈为空。
 
 ## 内部反馈
 

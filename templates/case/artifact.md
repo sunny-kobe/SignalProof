@@ -9,7 +9,7 @@ gate: passed
 
 ## 产物
 
-本 case 的产物是一个可复用的 SignalProof 证明案例。
+{{artifact_summary}}
 
 ## 文件
 

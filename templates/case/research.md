@@ -23,39 +23,29 @@ gate: weak
 
 ## 调研过程
 
-- 使用本地上下文、已有 SignalProof 产物、Codex 官方手册摘要和脚本自检。
-- 如涉及最近趋势，`last30days` 是候选能力；若没有实际运行，必须在 `tool-ledger.md` 写原因。
+{{research_process}}
 
 ## 来源覆盖表
 
 | 来源类型 | 候选能力 | 当前状态 | 结果质量 | 缺口 |
 | --- | --- | --- | --- | --- |
-| 公开讨论 | last30days / Reddit / HN / X / YouTube / Browser / Chrome | 待补 | weak | 未确认目标用户原话。 |
-| 项目和数据 | GitHub / Hugging Face / Similarweb / Semrush | 待补 | weak | 未确认可核验指标。 |
-| 官方和一手资料 | 官方文档 / OpenAI Docs / PDF / Documents | 待补 | weak | 未确认直接来源。 |
-| 反证和替代方案 | Scite / Readwise / Zotero / 竞品文档 / GitHub issues | 待补 | weak | 未确认强替代或失败风险。 |
+{{source_coverage_rows}}
 
 ## 交叉验证
 
-- 谁在说：待补。
-- 说什么：待补。
-- 在哪里说：待补。
-- 有没有反证：待补。
-- 能支持什么结论：当前只能支持内部流程实验或继续补研究。
+{{cross_validation}}
 
 ## 反证和替代方案
 
-- 待补成熟替代方案。
-- 待补失败案例或低意愿证据。
-- 待补“用户现在怎么解决”的证据。
+{{counterevidence}}
 
 ## 证据等级
 
-当前为弱到中等证据：足够支持内部流程实验，不足以支持市场验证。
+{{evidence_grade}}
 
 ## 结论许可
 
-当前许可：继续研究 / 低成本内部实验。不得写成已验证需求、市场已验证、可以产品化或可以做 SaaS。
+{{decision_permission}}
 
 ## 需要用户授权或开通
 
@@ -71,9 +61,4 @@ gate: weak
 
 ## 下一步补证
 
-- 补 1 个公开讨论来源。
-- 补 1 个项目或数据指标。
-- 补 1 个官方或一手资料。
-- 补 1 个反证或替代方案。
-
-继续内部协议验证。
+{{next_evidence_steps}}

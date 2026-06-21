@@ -9,16 +9,11 @@ gate: passed
 
 ## 验证对象
 
-SignalProof 协议是否能把 `{{title}}` 跑成完整、可检查、可复用的 case。
+{{validation_object}}
 
 ## 验证方式
 
-1. 生成完整阶段文件。
-2. 补充工具账本。
-3. 补充流程日志。
-4. 运行 `python3 scripts/signalproof.py check-all`。
-5. 运行 `python3 scripts/signalproof.py export-all`。
-6. 记录优化空间。
+{{validation_method_steps}}
 
 ## 跳过项
 
