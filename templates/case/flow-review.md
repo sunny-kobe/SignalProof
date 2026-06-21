@@ -28,6 +28,15 @@ gate: passed
 - 中：已有 SignalProof 经验和 Codex 手册能力映射。
 - 弱：真实用户反馈、真实 before/after、发布渠道反馈。
 
+## 研究准确性质量门
+
+| 检查项 | 状态 | 说明 |
+| --- | --- | --- |
+| 来源覆盖 | weak | 需要覆盖公开讨论、项目和数据、官方和一手资料、反证和替代方案。 |
+| 交叉验证 | weak | 需要确认谁在说、说什么、在哪里说、有没有反证。 |
+| 结论许可 | weak | 当前只能支持继续研究或低成本内部实验。 |
+| 用户授权缺口 | weak / optional | Full Disk Access 已是诊断项；X API credits 默认记为暂缺但非阻断；Readwise、Scite、Semrush、Similarweb、Brand24 按具体 case 做只读探针。 |
+
 ## 过度声称检查
 
 没有把真实反馈为空写成验证成功。

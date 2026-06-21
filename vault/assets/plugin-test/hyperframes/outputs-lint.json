@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "errorCount": 0,
+  "warningCount": 2,
+  "infoCount": 1,
+  "findings": [
+    {
+      "code": "composition_self_attribute_selector",
+      "severity": "warning",
+      "message": "Selector matches the block's own id; will leak to sibling instances when the block is embedded twice.",
+      "selector": "[data-composition-id=\"plugin-eval\"]",
+      "fixHint": "Use #plugin-eval for clearer authoring intent and instance-isolated styling.",
+      "file": "/Users/rust/Documents/SignalProof/vault/assets/plugin-test/hyperframes/index.html"
+    },
+    {
+      "code": "gsap_studio_edit_blocked",
+      "severity": "warning",
+      "message": "GSAP tweens target \"#scene-1 .eyebrow\", \"#scene-1 h1\", \"#scene-1 .lead\", \"#scene-2\", \"#scene-2 .eyebrow\", \"#scene-2 .card\", \"#scene-2 .badge\" in a registered timeline. Studio cannot save drag/resize edits to these elements — the runtime skips write-back for any element that appears in a registered window.__timelines timeline.",
+      "fixHint": "The hyperframes runtime registers timelines automatically. Do not add a manual window.__timelines script unless GSAP intentionally controls element positions. For initial visibility states, use CSS (e.g. opacity:0) instead of gsap.set(). If GSAP must own these elements' positions, avoid drag-editing them in Studio.",
+      "file": "/Users/rust/Documents/SignalProof/vault/assets/plugin-test/hyperframes/index.html"
+    }
+  ],
+  "filesScanned": 1,
+  "_meta": {
+    "version": "0.6.115",
+    "updateAvailable": false
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "repo": "/Users/rust/Documents/SignalProof",
+  "python": "3.9.6",
+  "last30days_script": "/Users/rust/.agents/skills/last30days/scripts/last30days.py",
+  "last30days_script_exists": true,
+  "recommended_last30days_python": "python3.14",
+  "last30days_diagnose": {
+    "returncode": 0,
+    "stdout": "{\n  \"available_sources\": [\n    \"reddit\",\n    \"tiktok\",\n    \"instagram\",\n    \"x\",\n    \"youtube\",\n    \"hackernews\",\n    \"polymarket\",\n    \"github\",\n    \"perplexity\",\n    \"threads\"\n  ],\n  \"bird_authenticated\": false,\n  \"bird_installed\": true,\n  \"bird_username\": null,\n  \"has_github\": true,\n  \"has_scrapecreators\": true,\n  \"local_mode\": false,\n  \"native_web_backend\": null,\n  \"providers\": {\n    \"google\": false,\n    \"openai\": false,\n    \"openrouter\": true,\n    \"xai\": false\n  },\n  \"reasoning_provider\": \"auto\",\n  \"x_backend\": \"xurl\"\n}",
+    "stderr": ""
+  },
+  "notes": []
+}

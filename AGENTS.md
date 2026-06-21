@@ -40,6 +40,7 @@ python3 scripts/signalproof.py export-all
 ```bash
 python3 scripts/signalproof.py diagnose
 python3 scripts/signalproof.py capabilities
+python3 scripts/signalproof.py plugin-status
 ```
 
 运行 `last30days` 时使用较新的 Python：
@@ -55,3 +56,5 @@ python3.14 /Users/rust/.agents/skills/last30days/scripts/last30days.py --diagnos
 - 弱证据只能支持低成本内部实验，不能支持产品化或 SaaS 结论。
 - 调用了工具不等于证据合格，`tool-ledger.md` 必须判断工具结果是否真的有用。
 - Codex 自带插件接入按 `docs/codex-plugin-flow.md` 执行；不要默认全跑插件。
+- 插件安装显示、界面不可见原因和可迁移性按 `docs/codex-plugin-status-and-migration.md` 执行；不要把 `not installed` marketplace 项误判成已安装插件缺失。
+- 插件锁定清单和换电脑重装脚本按 `docs/codex-plugin-lock.md` 与 `scripts/install-codex-plugins.sh` 执行；后续新增/移除插件或调整阶段流程时，必须同步更新这两个文件、`docs/codex-plugin-status-and-migration.md` 和当天 `plugin-status` 快照。

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SignalProof 插件试跑摘要</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #f7f8fa;
+        color: #111827;
+        font-family: Arial, sans-serif;
+      }
+
+      [data-composition-id="plugin-eval"] {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #f7f8fa;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        box-sizing: border-box;
+        padding: 120px 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 34px;
+      }
+
+      .eyebrow {
+        font-size: 30px;
+        font-weight: 800;
+        color: #0f766e;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 1180px;
+        font-size: 96px;
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 1160px;
+        font-size: 42px;
+        line-height: 1.28;
+        color: #4b5563;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        width: 100%;
+      }
+
+      .card {
+        min-height: 250px;
+        padding: 32px;
+        border: 2px solid #d7dee2;
+        background: #ffffff;
+        box-sizing: border-box;
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 18px;
+        font-size: 34px;
+        color: #111827;
+      }
+
+      .card span {
+        font-size: 25px;
+        line-height: 1.3;
+        color: #4b5563;
+      }
+
+      .scene-2 {
+        opacity: 0;
+      }
+
+      .badge-row {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        padding: 16px 22px;
+        background: #ffffff;
+        border: 2px solid #d7dee2;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .risk {
+        color: #d97706;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-composition-id="plugin-eval" data-start="0" data-duration="8" data-track-index="0" data-width="1920" data-height="1080">
+      <section id="scene-1" class="scene scene-1">
+        <div class="eyebrow">SIGNALPROOF PLUGIN TRIAL</div>
+        <h1>不是插件越多越好，而是证据链更硬</h1>
+        <div class="lead">GitHub、Record & Replay、Spreadsheets、Data Visualization 在本轮带来明显提升；账号类 connector 需要授权后再判断。</div>
+      </section>
+      <section id="scene-2" class="scene scene-2">
+        <div class="eyebrow">DEFAULT VS CONDITIONAL</div>
+        <div class="grid">
+          <div class="card"><strong>默认调研</strong><span>GitHub、last30days、OpenAI Docs 先上。</span></div>
+          <div class="card"><strong>默认产物</strong><span>表格和可视化把工具账本变成资产。</span></div>
+          <div class="card"><strong>条件验证</strong><span>Browser、Computer Use 当前环境失败，先修再默认。</span></div>
+          <div class="card"><strong class="risk">授权阻塞</strong><span>Readwise、Scite、Semrush 等不能伪装成已调用。</span></div>
+        </div>
+        <div class="badge-row">
+          <div class="badge">强增益：4 类</div>
+          <div class="badge">条件增益：多账号插件</div>
+          <div class="badge">真实反馈：仍为空</div>
+        </div>
+      </section>
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script>
+        window.__timelines = window.__timelines || {};
+        const tl = gsap.timeline({ paused: true });
+        tl.from("#scene-1 .eyebrow", { y: 48, opacity: 0, duration: 0.5, ease: "power3.out" }, 0);
+        tl.from("#scene-1 h1", { y: 60, opacity: 0, duration: 0.65, ease: "power3.out" }, 0.15);
+        tl.from("#scene-1 .lead", { y: 44, opacity: 0, duration: 0.55, ease: "power3.out" }, 0.35);
+        tl.to("#scene-2", { opacity: 1, duration: 0.45, ease: "power2.out" }, 3.9);
+        tl.from("#scene-2 .eyebrow", { y: 46, opacity: 0, duration: 0.45, ease: "power3.out" }, 4.05);
+        tl.from("#scene-2 .card", { y: 58, opacity: 0, stagger: 0.08, duration: 0.55, ease: "power3.out" }, 4.2);
+        tl.from("#scene-2 .badge", { y: 30, opacity: 0, stagger: 0.06, duration: 0.45, ease: "power3.out" }, 4.85);
+        tl.to("[data-composition-id='plugin-eval']", { opacity: 0, duration: 0.45, ease: "power2.in" }, 7.5);
+        window.__timelines["plugin-eval"] = tl;
+      </script>
+    </div>
+  </body>
+</html>

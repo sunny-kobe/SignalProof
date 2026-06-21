@@ -1,0 +1,11 @@
+--- page 1 ---
+Codex 推荐插件真实试跑评估
+PDF 插件试跑产物 | SignalProof | 2026-06-21
+本 PDF 用于验证 PDF 产物生成和文本抽取检查。由于当前环境缺少 pdftoppm/pdfinfo，本轮无法完成
+Poppler PNG 渲染，但 reportlab 生成和 pdfplumber 抽取均可运行。
+插件组 结果 建议
+GitHub / last30days 调研增益明显，但受来源额度影响 默认候选
+Record & Replay 能证明录制能力可见 资产化默认候选
+Spreadsheets / Data Viz 已产出 XLSX/PNG/HTML 默认进入工具账本
+App connector 未授权或工具入口缺失 授权后专项跑
+边界：本轮证明插件工作流增益，不证明市场验证；真实反馈仍为空。

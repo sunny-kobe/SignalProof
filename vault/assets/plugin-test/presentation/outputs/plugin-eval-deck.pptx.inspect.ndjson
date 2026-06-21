@@ -1,0 +1,19 @@
+{"kind":"deck","id":"pr/ev9c7p","name":"Deck"}
+{"kind":"layout","layoutId":"47ce9f75-e875-426e-8482-a93c99fca997","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"61ba4c31-2233-4603-8d94-2b20713ebe05","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/7qcd8i","slide":1,"title":"SIGNALPROOF PLUGIN TRIAL","textShapes":4}
+{"kind":"textbox","id":"sh/ixczed8v","slide":1,"name":"eyebrow","text":"SIGNALPROOF PLUGIN TRIAL","textPreview":"SIGNALPROOF PLUGIN TRIAL","textChars":24,"textLines":1,"bbox":[72,68,520,30]}
+{"kind":"textbox","id":"sh/tovahoza","slide":1,"name":"title","text":"哪些 Codex 插件真的提升个人工作流","textPreview":"哪些 Codex 插件真的提升个人工作流","textChars":20,"textLines":1,"bbox":[72,140,760,160]}
+{"kind":"textbox","id":"sh/032lszqt","slide":1,"name":"subtitle","text":"真实试跑结论：强增益、条件增益、环境失败、授权阻塞分开判断。","textPreview":"真实试跑结论：强增益、条件增益、环境失败、授权阻塞分开判断。","textChars":30,"textLines":1,"bbox":[72,330,780,70]}
+{"kind":"shape","id":"sh/bulwval8","slide":1,"name":"summary-card","bbox":[870,120,310,360]}
+{"kind":"textbox","id":"sh/i9s36hcr","slide":1,"name":"summary","text":"强增益\nGitHub\nRecord & Replay\nSpreadsheets\nData Visualization","textPreview":"强增益 | GitHub | Record & Replay | Spreadsheets | Data Visualization","textChars":58,"textLines":5,"bbox":[905,165,250,250]}
+{"kind":"notes","id":"nt/7qcd8i","slide":1,"text":""}
+{"kind":"slide","id":"sl/ygqh37","slide":2,"title":"调研类插件：能提速，但要承认来源缺口","textShapes":2}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":2,"name":"title","text":"调研类插件：能提速，但要承认来源缺口","textPreview":"调研类插件：能提速，但要承认来源缺口","textChars":18,"textLines":1,"bbox":[72,56,980,56]}
+{"kind":"textbox","id":"sh/onyd0z61","slide":2,"name":"body","text":"last30days 拉到 GitHub / Reddit / YouTube 证据，但 X 额度耗尽、Reddit public API 403、YouTube 评论 402。\n\nGitHub 和 Hugging Face 公开 API 适合作为默认初筛；Readwise / Scite / Semrush / Similarweb / Brand24 需要 connector 授权后再算真实调用。","textPreview":"last30days 拉到 GitHub / Reddit / YouTube 证据，但 X 额度耗尽、Reddit public API 403、YouTube 评论 402。 |  | GitHub 和 Hugging Face 公开 API 适合作为默认初筛；Read...","textChars":202,"textLines":3,"bbox":[90,160,760,260]}
+{"kind":"chart","id":"ch/dcbulwva","slide":2,"name":"","chartType":"bar","bbox":[880,170,300,280]}
+{"kind":"notes","id":"nt/ygqh37","slide":2,"text":""}
+{"kind":"slide","id":"sl/i8amgq","slide":3,"title":"默认策略：少数插件常驻，多数按 case 启用","textShapes":1}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":3,"name":"title","text":"默认策略：少数插件常驻，多数按 case 启用","textPreview":"默认策略：少数插件常驻，多数按 case 启用","textChars":23,"textLines":1,"bbox":[72,56,1040,58]}
+{"kind":"table","id":"tb/hwfyxobm","slide":3,"name":"","rows":5,"cols":3,"preview":"阶段 | 默认 | 条件启用","bbox":[96,150,1088,390]}
+{"kind":"notes","id":"nt/i8amgq","slide":3,"text":""}

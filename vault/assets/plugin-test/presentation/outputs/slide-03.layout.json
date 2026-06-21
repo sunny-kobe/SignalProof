@@ -1,0 +1,521 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/i8amgq",
+    "id": "i8amgq",
+    "slide": 3,
+    "layoutId": "61ba4c31-2233-4603-8d94-2b20713ebe05",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "47ce9f75-e875-426e-8482-a93c99fca997",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F8FAFC",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "+mn-lt"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "61ba4c31-2233-4603-8d94-2b20713ebe05",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "47ce9f75-e875-426e-8482-a93c99fca997",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "47ce9f75-e875-426e-8482-a93c99fca997",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7mp0bi9s",
+      "id": "1",
+      "name": "title",
+      "bbox": [
+        72,
+        56,
+        1040,
+        58
+      ],
+      "geometry": "rect",
+      "text": "默认策略：少数插件常驻，多数按 case 启用",
+      "textPreview": "默认策略：少数插件常驻，多数按 case 启用",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "fontSize": 35,
+        "typeface": "+mn-lt",
+        "color": "#020618",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "默认策略：少数插件常驻，多数按 case 启用"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "默认策略：少数插件常驻，多数按 case 启用",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "color": "#020618",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "默认策略：少数插件常驻，多数按 case 启用",
+              "fontSize": 35,
+              "color": "#020618",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "table",
+      "scope": "slide",
+      "aid": "tb/hwfyxobm",
+      "id": "2",
+      "bbox": [
+        96,
+        150,
+        1088,
+        390
+      ],
+      "text": "阶段 | 默认 | 条件启用\n调研 | GitHub, last30days | Readwise, Scite, Semrush\n验证 | 脚本自检, Spreadsheets | Browser, Computer Use, Sentry\n产物 | Spreadsheets, Data Viz | DOCX, PDF, PPTX, HyperFrames\n资产 | Record & Replay | Notion, Drive, Mem",
+      "textPreview": "阶段 | 默认 | 条件启用 | 调研 | GitHub, last30days | Readwise, Scite, Semrush | 验证 | 脚本自检, Spreadsheets | Browser, Computer Use, Sentry | 产物 | Spre...",
+      "rows": 5,
+      "cols": 3,
+      "cells": [
+        {
+          "index": 1,
+          "row": 1,
+          "column": 1,
+          "bbox": [
+            96,
+            150,
+            362.67,
+            78
+          ],
+          "text": "阶段",
+          "textPreview": "阶段",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "阶段",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "阶段"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "row": 1,
+          "column": 2,
+          "bbox": [
+            458.67,
+            150,
+            362.67,
+            78
+          ],
+          "text": "默认",
+          "textPreview": "默认",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "默认",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "默认"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "row": 1,
+          "column": 3,
+          "bbox": [
+            821.33,
+            150,
+            362.67,
+            78
+          ],
+          "text": "条件启用",
+          "textPreview": "条件启用",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "条件启用",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "条件启用"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "row": 2,
+          "column": 1,
+          "bbox": [
+            96,
+            228,
+            362.67,
+            78
+          ],
+          "text": "调研",
+          "textPreview": "调研",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "调研",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "调研"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "row": 2,
+          "column": 2,
+          "bbox": [
+            458.67,
+            228,
+            362.67,
+            78
+          ],
+          "text": "GitHub, last30days",
+          "textPreview": "GitHub, last30days",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "GitHub, last30days",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "GitHub, last30days"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "row": 2,
+          "column": 3,
+          "bbox": [
+            821.33,
+            228,
+            362.67,
+            78
+          ],
+          "text": "Readwise, Scite, Semrush",
+          "textPreview": "Readwise, Scite, Semrush",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Readwise, Scite, Semrush",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Readwise, Scite, Semrush"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "row": 3,
+          "column": 1,
+          "bbox": [
+            96,
+            306,
+            362.67,
+            78
+          ],
+          "text": "验证",
+          "textPreview": "验证",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "验证",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "验证"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "row": 3,
+          "column": 2,
+          "bbox": [
+            458.67,
+            306,
+            362.67,
+            78
+          ],
+          "text": "脚本自检, Spreadsheets",
+          "textPreview": "脚本自检, Spreadsheets",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "脚本自检, Spreadsheets",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "脚本自检, Spreadsheets"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "row": 3,
+          "column": 3,
+          "bbox": [
+            821.33,
+            306,
+            362.67,
+            78
+          ],
+          "text": "Browser, Computer Use, Sentry",
+          "textPreview": "Browser, Computer Use, Sentry",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Browser, Computer Use, Sentry",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Browser, Computer Use, Sentry"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "row": 4,
+          "column": 1,
+          "bbox": [
+            96,
+            384,
+            362.67,
+            78
+          ],
+          "text": "产物",
+          "textPreview": "产物",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "产物",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "产物"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "row": 4,
+          "column": 2,
+          "bbox": [
+            458.67,
+            384,
+            362.67,
+            78
+          ],
+          "text": "Spreadsheets, Data Viz",
+          "textPreview": "Spreadsheets, Data Viz",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Spreadsheets, Data Viz",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Spreadsheets, Data Viz"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "row": 4,
+          "column": 3,
+          "bbox": [
+            821.33,
+            384,
+            362.67,
+            78
+          ],
+          "text": "DOCX, PDF, PPTX, HyperFrames",
+          "textPreview": "DOCX, PDF, PPTX, HyperFrames",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "DOCX, PDF, PPTX, HyperFrames",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "DOCX, PDF, PPTX, HyperFrames"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "row": 5,
+          "column": 1,
+          "bbox": [
+            96,
+            462,
+            362.67,
+            78
+          ],
+          "text": "资产",
+          "textPreview": "资产",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "资产",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "资产"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "row": 5,
+          "column": 2,
+          "bbox": [
+            458.67,
+            462,
+            362.67,
+            78
+          ],
+          "text": "Record & Replay",
+          "textPreview": "Record & Replay",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Record & Replay",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Record & Replay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "row": 5,
+          "column": 3,
+          "bbox": [
+            821.33,
+            462,
+            362.67,
+            78
+          ],
+          "text": "Notion, Drive, Mem",
+          "textPreview": "Notion, Drive, Mem",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Notion, Drive, Mem",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Notion, Drive, Mem"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "composeRuns": []
+}

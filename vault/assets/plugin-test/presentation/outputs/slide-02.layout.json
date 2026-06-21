@@ -1,0 +1,237 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/ygqh37",
+    "id": "ygqh37",
+    "slide": 2,
+    "layoutId": "61ba4c31-2233-4603-8d94-2b20713ebe05",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "47ce9f75-e875-426e-8482-a93c99fca997",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFFFFF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "+mn-lt"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "61ba4c31-2233-4603-8d94-2b20713ebe05",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "47ce9f75-e875-426e-8482-a93c99fca997",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "47ce9f75-e875-426e-8482-a93c99fca997",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z25kb6xk",
+      "id": "1",
+      "name": "title",
+      "bbox": [
+        72,
+        56,
+        980,
+        56
+      ],
+      "geometry": "rect",
+      "text": "调研类插件：能提速，但要承认来源缺口",
+      "textPreview": "调研类插件：能提速，但要承认来源缺口",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "fontSize": 35,
+        "typeface": "+mn-lt",
+        "color": "#020618",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "调研类插件：能提速，但要承认来源缺口"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "调研类插件：能提速，但要承认来源缺口",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "color": "#020618",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "调研类插件：能提速，但要承认来源缺口",
+              "fontSize": 35,
+              "color": "#020618",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/onyd0z61",
+      "id": "2",
+      "name": "body",
+      "bbox": [
+        90,
+        160,
+        760,
+        260
+      ],
+      "geometry": "rect",
+      "text": "last30days 拉到 GitHub / Reddit / YouTube 证据，但 X 额度耗尽、Reddit public API 403、YouTube 评论 402。\n\nGitHub 和 Hugging Face 公开 API 适合作为默认初筛；Readwise / Scite / Semrush / Similarweb / Brand24 需要 connector 授权后再算真实调用。",
+      "textPreview": "last30days 拉到 GitHub / Reddit / YouTube 证据，但 X 额度耗尽、Reddit public API 403、YouTube 评论 402。 |  | GitHub 和 Hugging Face 公开 API 适合作为默认初筛；Read...",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "+mn-lt",
+        "color": "#45556C",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 6,
+        "lines": [
+          {
+            "index": 1,
+            "text": "last30days 拉到 GitHub / Reddit / YouTube 证据，但 X"
+          },
+          {
+            "index": 2,
+            "text": "额度耗尽、Reddit public API 403、YouTube 评论 402。"
+          },
+          {
+            "index": 3,
+            "text": ""
+          },
+          {
+            "index": 4,
+            "text": "GitHub 和 Hugging Face 公开 API 适合作为默认初筛；Readwise /"
+          },
+          {
+            "index": 5,
+            "text": "Scite / Semrush / Similarweb / Brand24 需要 connector"
+          },
+          {
+            "index": 6,
+            "text": "授权后再算真实调用。"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "last30days 拉到 GitHub / Reddit / YouTube 证据，但 X 额度耗尽、Reddit public API 403、YouTube 评论 402。",
+          "resolvedTextStyle": {
+            "fontSize": 24,
+            "color": "#45556C"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "last30days 拉到 GitHub / Reddit / YouTube 证据，但 X 额度耗尽、Reddit public API 403、YouTube 评论 402。",
+              "fontSize": 24,
+              "color": "#45556C"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "GitHub 和 Hugging Face 公开 API 适合作为默认初筛；Readwise / Scite / Semrush / Similarweb / Brand24 需要 connector 授权后再算真实调用。",
+          "resolvedTextStyle": {
+            "fontSize": 24,
+            "color": "#45556C"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "GitHub 和 Hugging Face 公开 API 适合作为默认初筛；Readwise / Scite / Semrush / Similarweb / Brand24 需要 connector 授权后再算真实调用。",
+              "fontSize": 24,
+              "color": "#45556C"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "chart",
+      "scope": "slide",
+      "aid": "ch/dcbulwva",
+      "id": "3",
+      "bbox": [
+        880,
+        170,
+        300,
+        280
+      ],
+      "chartType": "bar"
+    }
+  ],
+  "composeRuns": []
+}

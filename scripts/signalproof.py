@@ -26,6 +26,11 @@ RUNS = VAULT / "runs"
 TEMPLATES = ROOT / "templates" / "case"
 LAST30DAYS = Path("/Users/rust/.agents/skills/last30days/scripts/last30days.py")
 PLUGIN_CACHE = Path("/Users/rust/.codex/plugins/cache")
+CODEX_CONFIG = Path.home() / ".codex" / "config.toml"
+RESEARCH_GATE_DOC = ROOT / "docs" / "research-quality-gate.md"
+PLUGIN_STATUS_DOC = ROOT / "docs" / "codex-plugin-status-and-migration.md"
+PLUGIN_LOCK_DOC = ROOT / "docs" / "codex-plugin-lock.md"
+PLUGIN_INSTALL_SCRIPT = ROOT / "scripts" / "install-codex-plugins.sh"
 
 REQUIRED_FILES = [
     "signal.md",
@@ -85,6 +90,15 @@ PROCESS_TERMS = {
     "Optimization": [r"Optimization", r"优化"],
 }
 
+RESEARCH_GATE_TERMS = {
+    "source coverage": [r"来源覆盖", r"source coverage"],
+    "cross validation": [r"交叉验证", r"cross[- ]?validation"],
+    "counterevidence": [r"反证", r"替代方案", r"counterevidence"],
+    "evidence grade": [r"证据等级", r"strong", r"medium", r"weak", r"blocked"],
+    "decision permission": [r"结论许可", r"决策许可", r"低成本实验", r"继续研究"],
+    "user authorization": [r"用户授权", r"开通", r"认证", r"auth"],
+}
+
 BUILTIN_PLUGIN_SPECS = [
     ("Browser", "openai-bundled/browser/*/skills/control-in-app-browser/SKILL.md"),
     ("Chrome", "openai-bundled/chrome/*/skills/control-chrome/SKILL.md"),
@@ -94,8 +108,8 @@ BUILTIN_PLUGIN_SPECS = [
     ("PDF", "openai-primary-runtime/pdf/*/skills/pdf/SKILL.md"),
     ("Spreadsheets", "openai-primary-runtime/spreadsheets/*/skills/spreadsheets/SKILL.md"),
     ("Presentations", "openai-primary-runtime/presentations/*/skills/presentations/SKILL.md"),
-    ("Data Visualization", "openai-api-curated/build-web-data-visualization/*/.codex-plugin/plugin.json"),
-    ("HyperFrames", "openai-api-curated/hyperframes/*/.codex-plugin/plugin.json"),
+    ("Data Visualization", "openai-curated/build-web-data-visualization/*/.codex-plugin/plugin.json"),
+    ("HyperFrames", "openai-curated/hyperframes/*/.codex-plugin/plugin.json"),
 ]
 
 STAGE_CAPABILITY_MATRIX = [
@@ -109,10 +123,10 @@ STAGE_CAPABILITY_MATRIX = [
     },
     {
         "stage": "research",
-        "purpose": "收集证据，区分事实、推断和缺口。",
-        "default_capabilities": "last30days、Web/Search、GitHub/HN/RSS、官方文档。",
+        "purpose": "收集证据，区分事实、推断、缺口和结论许可。",
+        "default_capabilities": "last30days、Web/Search、GitHub/HN/RSS、官方文档、research-quality-gate。",
         "codex_plugins": "Browser 验证公开页面；Chrome 读取登录态页面；PDF/Documents/Spreadsheets 读取外部资料；Data Visualization 仅在需要看数据结构时使用。",
-        "use_when": "信息时效性强、来源需要登录、资料是 PDF/DOCX/表格，或证据需要可视化判断。",
+        "use_when": "信息时效性强、来源需要登录、资料是 PDF/DOCX/表格，或证据需要可视化判断；必须记录来源覆盖、交叉验证、反证和结论许可。",
         "write_to": "research.md、vault/assets/research/、tool-ledger.md",
     },
     {
@@ -353,6 +367,210 @@ def capability_matrix(_: argparse.Namespace | None = None) -> int:
     return 0
 
 
+def parse_enabled_plugins_from_config() -> list[str]:
+    if not CODEX_CONFIG.exists():
+        return []
+    enabled: list[str] = []
+    current: str | None = None
+    for raw_line in read_text(CODEX_CONFIG).splitlines():
+        line = raw_line.strip()
+        match = re.match(r'^\[plugins\."([^"]+)"\]$', line)
+        if match:
+            current = match.group(1)
+            continue
+        if current and line == "enabled = true":
+            enabled.append(current)
+            current = None
+        elif line.startswith("["):
+            current = None
+    return sorted(enabled)
+
+
+def parse_plugin_list_output(output: str) -> dict[str, list[str]]:
+    installed: list[str] = []
+    not_installed: list[str] = []
+    marketplaces: list[str] = []
+    current_marketplace = ""
+    for line in output.splitlines():
+        market_match = re.match(r"^Marketplace `([^`]+)`", line)
+        if market_match:
+            current_marketplace = market_match.group(1)
+            marketplaces.append(current_marketplace)
+            continue
+        columns = line.split()
+        if not columns or "@" not in columns[0]:
+            continue
+        plugin = columns[0]
+        if current_marketplace and "@" not in plugin:
+            plugin = f"{plugin}@{current_marketplace}"
+        if "installed, enabled" in line:
+            installed.append(plugin)
+        elif "not installed" in line:
+            not_installed.append(plugin)
+    return {
+        "marketplaces": sorted(marketplaces),
+        "installed": sorted(installed),
+        "not_installed": sorted(not_installed),
+    }
+
+
+def parse_marketplace_list_output(output: str) -> list[tuple[str, str]]:
+    rows: list[tuple[str, str]] = []
+    for line in output.splitlines():
+        if not line.strip() or line.startswith("MARKETPLACE"):
+            continue
+        parts = line.split(None, 1)
+        if len(parts) == 2:
+            rows.append((parts[0], parts[1]))
+    return rows
+
+
+def parse_plugin_install_script() -> list[str]:
+    if not PLUGIN_INSTALL_SCRIPT.exists():
+        return []
+    plugins: list[str] = []
+    for raw_line in read_text(PLUGIN_INSTALL_SCRIPT).splitlines():
+        line = raw_line.strip().strip('"').strip("'")
+        if re.match(r"^[a-z0-9][a-z0-9-]*@[a-z0-9-]+$", line):
+            plugins.append(line)
+    return sorted(set(plugins))
+
+
+def plugin_status(_: argparse.Namespace | None = None) -> int:
+    enabled = parse_enabled_plugins_from_config()
+    marketplace_proc = subprocess.run(
+        ["codex", "plugin", "marketplace", "list"],
+        text=True,
+        capture_output=True,
+        timeout=30,
+    )
+    list_proc = subprocess.run(
+        ["codex", "plugin", "list"],
+        text=True,
+        capture_output=True,
+        timeout=60,
+    )
+    marketplace_rows = parse_marketplace_list_output(marketplace_proc.stdout if marketplace_proc.returncode == 0 else "")
+    plugin_list = parse_plugin_list_output(list_proc.stdout if list_proc.returncode == 0 else "")
+    install_script_plugins = parse_plugin_install_script()
+    runtime_plugins = [name for name in enabled if "@openai-primary-runtime" in name]
+    runtime_cache_plugins = sorted(
+        path.parent.parent.parent.name
+        for path in PLUGIN_CACHE.glob("openai-primary-runtime/*/*/.codex-plugin/plugin.json")
+    )
+    local_signalproof_exists = (ROOT / ".agents" / "plugins" / "marketplace.json").exists() and (
+        ROOT / "plugins" / "signalproof" / ".codex-plugin" / "plugin.json"
+    ).exists()
+
+    lines = [
+        "# Codex 插件状态快照",
+        "",
+        f"生成日期：{date.today().isoformat()}",
+        "",
+        "## 结论",
+        "",
+        f"- `~/.codex/config.toml` 中启用项：{len(enabled)} 个。",
+        f"- `codex plugin list` 中已安装启用的 marketplace 插件：{len(plugin_list['installed'])} 个。",
+        f"- `codex plugin list` 中未安装的 marketplace 插件：{len(plugin_list['not_installed'])} 个。",
+        f"- primary-runtime 配置启用项：{len(runtime_plugins)} 个。",
+        f"- primary-runtime 本机缓存可用能力：{len(runtime_cache_plugins)} 个，通常包括 Documents / PDF / Spreadsheets / Presentations。",
+        f"- SignalProof 本地 repo marketplace：{'存在' if local_signalproof_exists else '缺失'}。",
+        f"- repo 插件锁定清单：{'存在' if PLUGIN_LOCK_DOC.exists() else '缺失'}。",
+        f"- repo 插件重装脚本：{'存在' if PLUGIN_INSTALL_SCRIPT.exists() else '缺失'}，脚本记录 {len(install_script_plugins)} 个插件。",
+        "",
+        "## 怎么看是否安装",
+        "",
+        "- 以 `codex plugin list` 的 `STATUS` 列为准：只有 `installed, enabled` 才是已安装启用。",
+        "- `not installed` 只是 marketplace 里可选但没有安装的插件，会和已安装插件一起显示。",
+        "- `~/.codex/config.toml` 里的 `[plugins.\"...\"] enabled = true` 是本机启用状态；它不是 repo 内容，换机器不会自动跟着仓库走。",
+        "- 插件安装后通常要开启新线程才会进入新会话的技能/工具上下文。",
+        "- skills 初始列表有上下文预算，插件多时界面可能不展示全部 skills；选中或显式调用后仍会读取完整 `SKILL.md`。",
+        "- app connector、MCP server 和外部账号授权是独立层；插件已安装不等于 connector 已能读取真实数据。",
+        "",
+        "## marketplace",
+        "",
+        "| 名称 | 路径 |",
+        "| --- | --- |",
+    ]
+    for name, path in marketplace_rows:
+        lines.append(f"| `{name}` | `{path}` |")
+    lines.extend([
+        "",
+        "## 已安装启用的 marketplace 插件",
+        "",
+    ])
+    for name in plugin_list["installed"]:
+        lines.append(f"- `{name}`")
+    lines.extend([
+        "",
+        "## repo 重装脚本记录的插件",
+        "",
+        "这些插件由 `scripts/install-codex-plugins.sh` 记录，用于换电脑后重装。脚本只保存插件名，不保存 OAuth、cookie、API key。",
+        "",
+    ])
+    installed_set = set(plugin_list["installed"])
+    for name in install_script_plugins:
+        state = "installed, enabled" if name in installed_set else "not installed or not visible in current marketplace list"
+        lines.append(f"- `{name}`：{state}")
+    lines.extend([
+        "",
+        "## primary-runtime / 配置启用项",
+        "",
+    ])
+    for name in runtime_plugins:
+        lines.append(f"- `{name}`")
+    lines.extend([
+        "",
+        "## primary-runtime / 本机缓存可用能力",
+        "",
+    ])
+    for name in runtime_cache_plugins:
+        lines.append(f"- `{name}`")
+    lines.extend([
+        "",
+        "## 可迁移性判断",
+        "",
+        "| 对象 | 能否跟仓库迁移 | 说明 |",
+        "| --- | --- | --- |",
+        "| `plugins/signalproof/` | 可以 | repo 内本地插件源码，应纳入版本控制。 |",
+        "| `.agents/plugins/marketplace.json` | 可以 | repo marketplace 入口，应纳入版本控制。 |",
+        "| `.agents/skills/signalproof/` | 可以 | repo skill，可随仓库迁移。 |",
+        "| `vault/` 与 `templates/` | 可以 | SignalProof 的主要事实资产。 |",
+        "| `docs/codex-plugin-lock.md` | 可以 | 插件锁定清单，记录应该安装哪些插件和迁移策略。 |",
+        "| `scripts/install-codex-plugins.sh` | 可以 | 新机器重装官方插件的脚本，只保存插件名。 |",
+        "| `~/.codex/config.toml` 的插件启用项 | 不能自动随 repo 迁移 | 新机器需要重新安装或导入对应 marketplace，再启用插件。 |",
+        "| 官方/curated 插件缓存 | 不建议直接迁移 | 缓存路径和版本与本机 Codex 相关，应该用 `codex plugin add` 或插件目录重新安装。 |",
+        "| 外部账号 OAuth / 浏览器登录态 / API key | 不应随 repo 迁移 | 需要在新机器按账号重新授权，避免泄露凭据。 |",
+        "",
+        "## 迁移时最小清单",
+        "",
+        "1. 克隆或复制 SignalProof 仓库。",
+        "2. 确认 `.agents/plugins/marketplace.json` 和 `plugins/signalproof/.codex-plugin/plugin.json` 存在。",
+        "3. 运行 `bash scripts/install-codex-plugins.sh` 重装官方插件。",
+        "4. 在新机器运行 `codex plugin marketplace list`，确认是否能看到需要的 marketplace。",
+        "5. 新开 Codex 线程，再检查技能和工具是否出现。",
+        "6. 运行 `python3 scripts/signalproof.py capabilities` 和 `python3 scripts/signalproof.py plugin-status` 复核。",
+        "7. 对 Readwise、Scite、Semrush、Similarweb、Brand24、Google Drive、Notion 等外部 app connector 重新登录授权。",
+        "",
+        "## 官方文档复核",
+        "",
+        "- OpenAI Codex Plugins 文档：插件可以包含 Skills、Apps 和 MCP servers；安装后开启新线程使用；外部 app 可能在安装或首次使用时要求授权。",
+        "- OpenAI Agent Skills 文档：skills 使用渐进加载，初始列表只展示有限元信息；repo skills 位于 `.agents/skills`，适合随仓库迁移。",
+        "- OpenAI Build Plugins 文档：repo marketplace 可放在 `$REPO_ROOT/.agents/plugins/marketplace.json`，插件源码可放在 `$REPO_ROOT/plugins/`；添加或修改本地插件后需要重启 Codex。",
+        "- OpenAI MCP 文档：插件可以携带 MCP server 配置，但外部工具、认证和 tool policy 仍需要单独生效。",
+        "- SignalProof 本地规则：插件或流程更新时，同步更新 `docs/codex-plugin-lock.md`、`scripts/install-codex-plugins.sh` 和本状态快照。",
+        "",
+        "## 官方依据",
+        "",
+        "- OpenAI Codex Plugins 文档：插件浏览器按 marketplace 分组；安装后新开线程使用；外部 app 可能在安装或首次使用时要求授权。",
+        "- OpenAI Build Plugins 文档：可用 `codex plugin marketplace add` 添加本地路径、GitHub repo、Git URL 或 sparse marketplace。",
+    ])
+    text = "\n".join(lines) + "\n"
+    write_text(RUNS / f"{date.today().isoformat()}-codex-plugin-status.md", text)
+    print(text)
+    return 0 if marketplace_proc.returncode == 0 and list_proc.returncode == 0 else 1
+
+
 def init_case(args: argparse.Namespace) -> int:
     slug = args.slug or today_slug(args.title)
     case_dir = CASES / slug
@@ -414,6 +632,7 @@ def check_case(case_dir: Path) -> CaseCheck:
     decision_path = case_dir / "decision.md"
     tool_ledger_path = case_dir / "tool-ledger.md"
     process_log_path = case_dir / "process-log.md"
+    research_path = case_dir / "research.md"
     assumed_path = case_dir / "assumed-feedback.md"
 
     if feedback_path.exists():
@@ -441,6 +660,15 @@ def check_case(case_dir: Path) -> CaseCheck:
                 warnings.append(f"tool-ledger.md missing capability term: {term}")
         if not has_phrase(ledger, r"强|中|弱|失败|strong|medium|weak|failed"):
             warnings.append("tool-ledger.md may not judge result quality / 工具账本可能没有判断结果质量")
+        for term, patterns in RESEARCH_GATE_TERMS.items():
+            if not any(has_phrase(ledger, pattern) for pattern in patterns):
+                warnings.append(f"tool-ledger.md missing research gate term: {term}")
+
+    if research_path.exists():
+        research = read_text(research_path)
+        for term, patterns in RESEARCH_GATE_TERMS.items():
+            if not any(has_phrase(research, pattern) for pattern in patterns):
+                warnings.append(f"research.md missing research gate term: {term}")
 
     if process_log_path.exists():
         process = read_text(process_log_path)
@@ -573,6 +801,30 @@ def check_goal(args: argparse.Namespace) -> int:
         errors.append("missing today's Codex capability matrix; run capabilities")
     if not (ROOT / "docs" / "codex-plugin-flow.md").exists():
         errors.append("missing docs/codex-plugin-flow.md")
+    agents_path = ROOT / "AGENTS.md"
+    if agents_path.exists():
+        agents_text = read_text(agents_path)
+        for required in ["docs/codex-plugin-lock.md", "scripts/install-codex-plugins.sh", "plugin-status"]:
+            if required not in agents_text:
+                errors.append(f"AGENTS.md missing plugin sync rule: {required}")
+    else:
+        errors.append("missing AGENTS.md")
+    if not PLUGIN_STATUS_DOC.exists():
+        errors.append("missing docs/codex-plugin-status-and-migration.md")
+    if not PLUGIN_LOCK_DOC.exists():
+        errors.append("missing docs/codex-plugin-lock.md")
+    if not PLUGIN_INSTALL_SCRIPT.exists():
+        errors.append("missing scripts/install-codex-plugins.sh")
+    else:
+        install_plugins = parse_plugin_install_script()
+        if len(install_plugins) < 10:
+            errors.append("scripts/install-codex-plugins.sh has too few plugin entries")
+        install_text = read_text(PLUGIN_INSTALL_SCRIPT)
+        if "OAuth" not in install_text or "cookie" not in install_text or "API key" not in install_text:
+            errors.append("scripts/install-codex-plugins.sh must say credentials are not migrated")
+    if not (RUNS / f"{date.today().isoformat()}-codex-plugin-status.md").exists():
+        errors.append("missing today's Codex plugin status; run plugin-status")
+    errors.extend(check_research_gate_assets())
     legacy_dir = CASES / "2026-06-20-ai-coding-repo-context-loss" / "legacy"
     if not legacy_dir.exists() or not any(legacy_dir.iterdir()):
         errors.append("missing migrated legacy artifacts under ai-coding case")
@@ -603,6 +855,26 @@ def check_goal(args: argparse.Namespace) -> int:
     print(f"- cases: {len(case_dirs)}")
     print(f"- reports index: {REPORTS / 'index.html'}")
     return 0
+
+
+def check_research_gate_assets() -> list[str]:
+    errors: list[str] = []
+    paths = [
+        RESEARCH_GATE_DOC,
+        TEMPLATES / "research.md",
+        TEMPLATES / "tool-ledger.md",
+        TEMPLATES / "flow-review.md",
+        PLUGIN_LOCK_DOC,
+    ]
+    for path in paths:
+        if not path.exists():
+            errors.append(f"missing research gate asset: {path.relative_to(ROOT)}")
+            continue
+        text = read_text(path)
+        for term, patterns in RESEARCH_GATE_TERMS.items():
+            if not any(has_phrase(text, pattern) for pattern in patterns):
+                errors.append(f"{path.relative_to(ROOT)} missing research gate term: {term}")
+    return errors
 
 
 class LinkParser(HTMLParser):
@@ -689,6 +961,7 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("diagnose", help="Record local capability snapshot.").set_defaults(func=diagnose)
     sub.add_parser("capabilities", help="Print the stage-to-Codex-plugin capability matrix.").set_defaults(func=capability_matrix)
+    sub.add_parser("plugin-status", help="Record local Codex plugin install and migration status.").set_defaults(func=plugin_status)
     sub.add_parser("list", help="List cases.").set_defaults(func=list_cases)
     sub.add_parser("check-all", help="Check all cases.").set_defaults(func=check_all)
     sub.add_parser("export-all", help="Export all case reports.").set_defaults(func=export_all)
