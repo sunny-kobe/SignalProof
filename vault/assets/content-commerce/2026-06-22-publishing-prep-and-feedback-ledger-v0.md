@@ -107,7 +107,7 @@ CTA：
 
 | 内容 | 源文件 | 发布前动作 |
 | --- | --- | --- |
-| AI Slop 真实性检查表 | `vault/assets/content-commerce/2026-06-22-ai-slop-trust-content-sample.md` | 压成 8 张小红书卡片文案；补 AI 辅助声明 |
+| AI Slop 真实性检查表 | `vault/assets/content-commerce/2026-06-22-xhs-ai-slop-trust-publish-draft-v0.md` | 已压成 8 张小红书卡片发布草稿；发布当天补 AI 标识入口 |
 | AI Search / GEO 行动清单 | `vault/assets/content-commerce/2026-06-22-ai-search-geo-content-sample.md` | 公众号长文保留原始链接；小红书版删减外链 |
 | AI Coding Agent 边界卡 | `vault/assets/content-commerce/2026-06-22-ai-coding-agent-boundary-content-sample.md` | 发布前补 1 个本地 Codex/Claude Code 对照例子 |
 | 免费资料包样例 | `vault/assets/content-commerce/2026-06-22-overseas-ai-signal-assets-free-pack-v0.md` | 发布前决定领取方式：评论关键词、私信或临时网盘 |
