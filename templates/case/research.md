@@ -3,6 +3,13 @@ type: research
 status: completed
 updated_at: {{created_at}}
 gate: weak
+evidence_grade: weak
+permission: continue-research
+source_types_covered: 0
+primary_source_count: 0
+external_quote_count: 0
+counterevidence_count: 0
+independent_source_count: 0
 ---
 
 # 研究
@@ -43,9 +50,20 @@ gate: weak
 
 {{evidence_grade}}
 
+Frontmatter 必须同步维护：
+
+- `evidence_grade`: strong / medium / weak / blocked。
+- `source_types_covered`: 已覆盖来源类型数量。
+- `primary_source_count`: 一手或官方来源数量。
+- `external_quote_count`: 可复查外部原话数量。
+- `counterevidence_count`: 反证或替代方案数量。
+- `independent_source_count`: 独立来源数量。
+
 ## 结论许可
 
 {{decision_permission}}
+
+Frontmatter `permission` 只能是 `continue-research` / `low-cost-experiment` / `pause` / `abandon`。只有当来源覆盖和反证数量达到门槛时，才允许写 `low-cost-experiment`。
 
 ## 需要用户授权或开通
 

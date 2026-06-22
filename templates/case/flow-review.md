@@ -2,7 +2,7 @@
 type: flow_review
 status: completed
 updated_at: {{created_at}}
-case_stage: full-internal-loop
+case_stage: {{case_mode}}-loop
 gate: passed
 ---
 
@@ -40,6 +40,15 @@ gate: passed
 ## 过度声称检查
 
 没有把真实反馈为空写成验证成功。
+
+## Full 升级检查
+
+只有同时满足以下条件时，外部机会 case 才能从 lite 升级为 full：
+
+- `research.md` 的 `evidence_grade` 至少为 `medium`。
+- 有明确外部动作：发布、访谈、私信测试、下载页、表单回收或真实目标人反馈。
+- 至少有一个可登记资产候选。
+- `decision.md` 写明为什么需要 full，而不是为了完整而完整。
 
 ## 优化空间
 

@@ -1,5 +1,22 @@
 # SignalProof 案例报告：2026-06-21-插件试跑-case-1-ai-coding-repo-context-loss-调研验证
 
+## 0. 决策先行
+
+- case_mode：`full`
+- 信号：用调研类插件验证 AI coding repo context loss 是否仍是值得进入 SignalProof 的信号
+- 决策：继续内部协议验证。
+- 证据等级：| 维度 | 结论 |
+| 来源覆盖 | 弱到中。GitHub/Reddit/YouTube 有结果，但 X/HN 缺失。 |
+| 相关性 | 中。部分命中 repo context 和 memory，部分为泛 AI coding 噪音。 |
+| 用户原话 | 中。Reddit 有原话，但样本少。 |
+- 反馈状态：真实反馈为空。
+- 可复用资产：`last30days` 调研插件试跑样本：AI coding repo context loss
+- 下一步：- 如果本 case 暴露流程缺口，把缺口写入 `flow-review.md`。
+- 如果缺口可脚本化，更新 `scripts/signalproof.py`。
+- 边界：full case 只证明本轮已覆盖完整 SignalProof 记录；真实反馈为空时仍不能写成市场验证。
+
+## 1. 详细记录
+
 ## 信号
 
 ---

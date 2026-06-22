@@ -1,13 +1,15 @@
-# SignalProof 协议 MVP
+# SignalProof 个人证据协议
 
 ## 定位
 
-SignalProof 在第一阶段是 Codex 协议和未来插件包，不是独立 App。
+SignalProof 当前执行名是 `SignalProof 个人证据协议`。它是本地 Markdown vault + Python 标准库脚本 + Codex 执行习惯组成的个人判断协议，不是独立 App、SaaS dashboard、workflow builder、通用知识库、自动雷达或插件平台。
+
+`Personal Opportunity OS` 是长期背景叙事，只解释为什么要把信号、证据、决策和资产放在同一条链路里；它不作为 V0.2 的执行口号，也不扩展当前仓库范围。
 
 ```text
 Codex = 主界面、执行者、研究者、写作者、验收者
-SignalProof = 协议、模板、vault、脚本、能力账本
-其他 skills/plugins = 分阶段调用的能力
+SignalProof = 个人证据协议、模板、vault、脚本、资产复用账本
+其他 skills/plugins = 分阶段调用的候选能力
 用户 = 判断者、发布者、最终拍板者
 ```
 
@@ -24,15 +26,38 @@ SignalProof = 协议、模板、vault、脚本、能力账本
 9. 把有效输出沉淀成可复用资产。
 10. 做流程自检并更新工具账本。
 
+资产沉淀不只是在 `asset.md` 写“可复用”。真正可复用的资产必须登记到 `vault/assets/registry.md`，并在后续 case 使用时更新 `last_used_by`，否则只能算资产候选。
+
 ## Case 类型
 
-默认 case 类型是 `external-opportunity`，用于真实机会验证。内部流程审计、工作流优化、插件流程复核和二次审视类任务使用：
+默认 case 类型是 `external-opportunity`，用于真实外部机会初筛。内部流程审计、工作流优化、插件流程复核和二次审视类任务使用：
 
 ```bash
 python3 scripts/signalproof.py init-case "<标题>" --case-type internal-audit
 ```
 
-`internal-audit` 只能支持本地机制改进和流程决策，不能写成外部市场验证。它的证据重点是 `AGENTS.md`、repo skill、`docs/`、`templates/`、`scripts/`、`vault/cases/` 和 `vault/runs/` 是否真的改变。
+`internal-audit` 只能支持本地机制改进和流程决策，不能写成外部市场验证。`plugin-test` 只能证明插件调用路径、授权缺口或产物验收能力。`external-opportunity` 才能进入外部机会判断，但也必须区分 published、observed feedback 和 validated。
+
+## Case Mode
+
+SignalProof 分两种 case mode：
+
+- `lite`：新外部机会的默认模式，用于信号初筛、快速反方判断和资产候选登记。只要求 `signal.md`、`research.md`、`debate.md`、`decision.md`、`asset.md`。lite 的目标是判断是否继续、收窄、暂停、放弃或升级，不代表完整 proof。
+- `full`：有硬条件的升级事件。只有当证据等级至少为 `medium`、存在明确外部动作、至少有一个可登记资产候选，并且 `decision.md` 说明为什么需要 full 时，外部机会才升级为 full。internal-audit 可以使用 full 来记录完整机制改造，但不能写成市场验证。
+
+创建轻量 case：
+
+```bash
+python3 scripts/signalproof.py init-case "<标题>" --case-mode lite
+```
+
+创建完整内部审计 case：
+
+```bash
+python3 scripts/signalproof.py init-case "<标题>" --case-type internal-audit --case-mode full
+```
+
+已有内部工作流优化和插件试跑 case 属于个人工作流测试样本，可以保留；它们证明机制改进，不证明外部机会成立。
 
 ## Gate 状态
 
@@ -89,7 +114,7 @@ python3 scripts/signalproof.py check-case <case-slug> --strict
 
 ## 插件和可迁移性
 
-Codex 插件不是默认全跑能力。每个 case 先看阶段目标，再按 [`docs/codex-plugin-flow.md`](codex-plugin-flow.md) 选择能改变判断、减少不确定性或验收产物的插件。
+Codex 插件在 V0.2 降级为候选能力。每个 case 先看阶段目标，再按 [`docs/codex-plugin-flow.md`](codex-plugin-flow.md) 选择能改变判断、减少不确定性或验收产物的插件。插件安装数量、marketplace 可见性和状态快照都不能证明工具可用、账号已授权或证据成立。
 
 判断插件是否装好、为什么界面里看不到、以及哪些部分能随 SignalProof 仓库迁移时，执行：
 

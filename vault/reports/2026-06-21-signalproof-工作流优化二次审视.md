@@ -1,5 +1,24 @@
 # SignalProof 案例报告：2026-06-21-signalproof-工作流优化二次审视
 
+## 0. 决策先行
+
+- case_mode：`full`
+- 信号：复核最近 SignalProof 自审报告，判断哪些结论可靠、哪些只是建议，并把最高价值改进落地为本地脚本、模板和文档约束。
+- 决策：继续使用当前工作流，但把本轮发现的缺口落实为确定性检查和模板约束。
+- 证据等级：当前证据等级：medium。
+- strong：脚本 diff、模板 diff、AGENTS 和 repo skill 的规则变更，可以证明本地机制已经改变。
+- medium：最近自审 case 的结论整体可靠，但它对模板占位、内部审计类型和 connector 探针仍只是建议。
+- weak：外部用户反馈、真实市场反馈、外部 connector 可读性和 X 侧实时讨论。
+- 反馈状态：真实反馈为空。
+- 可复用资产：SignalProof 工作流优化二次审视 证明案例
+- 下一步：- 提交前运行指定验证命令。
+- 后续真实机会 case 继续用 `external-opportunity`，完成前必须清理占位标记。
+- 后续内部审计和流程优化 case 使用 `--case-type internal-audit`。
+- connector 可读性仍按具体 case 探针，不把插件安装写成授权成功。
+- 边界：full case 只证明本轮已覆盖完整 SignalProof 记录；真实反馈为空时仍不能写成市场验证。
+
+## 1. 详细记录
+
 ## 信号
 
 ---

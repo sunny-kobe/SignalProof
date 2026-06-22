@@ -1,5 +1,22 @@
 # SignalProof 案例报告：2026-06-21-插件试跑-case-2-signalproof-报告发布与验收
 
+## 0. 决策先行
+
+- case_mode：`full`
+- 信号：用验证类和发布类插件检查 SignalProof 报告/HTML/仓库入口是否更容易验收
+- 决策：继续内部协议验证。
+- 证据等级：| 能力 | 结果质量 | 说明 |
+| Record & Replay | 强 | 工具状态可读，适合后续把用户演示转为 Skill。 |
+| GitHub CLI | 强 | 能读取公开仓库，适合发布入口和开源反馈检查。 |
+| Browser | 失败 | 当前环境 setup 失败，不能作为硬性验收 gate。 |
+- 反馈状态：真实反馈为空。
+- 可复用资产：SignalProof 报告/页面验收降级策略
+- 下一步：- 如果本 case 暴露流程缺口，把缺口写入 `flow-review.md`。
+- 如果缺口可脚本化，更新 `scripts/signalproof.py`。
+- 边界：full case 只证明本轮已覆盖完整 SignalProof 记录；真实反馈为空时仍不能写成市场验证。
+
+## 1. 详细记录
+
 ## 信号
 
 ---

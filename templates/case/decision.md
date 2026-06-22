@@ -14,14 +14,12 @@ gate: passed
 
 ## 理由
 
-- 本轮目标是验证 SignalProof 流程和自动化，而不是市场。
-- 真实反馈为空，因此只能做内部继续/收窄判断。
+{{decision_reason}}
 
 ## 下一步
 
-- 如果本 case 暴露流程缺口，把缺口写入 `flow-review.md`。
-- 如果缺口可脚本化，更新 `scripts/signalproof.py`。
+{{decision_next_steps}}
 
 ## 边界
 
-真实反馈为空，不能声称验证成功。
+{{decision_boundary}}

@@ -2,6 +2,8 @@
 type: signal
 title: {{title}}
 case_type: {{case_type}}
+case_mode: {{case_mode}}
+protocol_scope: personal-evidence-protocol
 status: captured
 created_at: {{created_at}}
 gate: passed

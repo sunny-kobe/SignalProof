@@ -23,6 +23,7 @@ VAULT = ROOT / "vault"
 CASES = VAULT / "cases"
 REPORTS = VAULT / "reports"
 RUNS = VAULT / "runs"
+ASSET_REGISTRY = VAULT / "assets" / "registry.md"
 TEMPLATES = ROOT / "templates" / "case"
 LAST30DAYS = Path("/Users/rust/.agents/skills/last30days/scripts/last30days.py")
 PLUGIN_CACHE = Path("/Users/rust/.codex/plugins/cache")
@@ -46,6 +47,14 @@ REQUIRED_FILES = [
     "tool-ledger.md",
     "process-log.md",
     "report.md",
+]
+
+LITE_REQUIRED_FILES = [
+    "signal.md",
+    "research.md",
+    "debate.md",
+    "decision.md",
+    "asset.md",
 ]
 
 OPTIONAL_FILES = [
@@ -118,6 +127,50 @@ RESEARCH_GATE_TERMS = {
     "decision permission": [r"结论许可", r"决策许可", r"低成本实验", r"继续研究"],
     "user authorization": [r"用户授权", r"开通", r"认证", r"auth"],
 }
+
+ALLOWED_EVIDENCE_GRADES = {"strong", "medium", "weak", "blocked"}
+ALLOWED_RESEARCH_PERMISSIONS = {"continue-research", "low-cost-experiment", "pause", "abandon"}
+ALLOWED_FEEDBACK_STATUS = {
+    "none",
+    "internal",
+    "synthetic-demo",
+    "assumed",
+    "published-no-feedback",
+    "qualitative-real",
+    "quantitative-real",
+    "paid-signal",
+}
+NON_REAL_FEEDBACK_STATUS = {
+    "none",
+    "internal",
+    "synthetic-demo",
+    "assumed",
+    "published-no-feedback",
+}
+ALLOWED_VALIDATION_STATUS = {"none", "artifact-built", "published", "externally-observed", "repeated"}
+ALLOWED_ASSET_STATUS = {"none", "candidate", "registered", "reused", "retired"}
+STRUCTURED_RESEARCH_FIELDS = [
+    "evidence_grade",
+    "permission",
+    "source_types_covered",
+    "primary_source_count",
+    "external_quote_count",
+    "counterevidence_count",
+    "independent_source_count",
+]
+STRUCTURED_FEEDBACK_FIELDS = [
+    "feedback_status",
+    "validation_status",
+    "real_feedback_count",
+    "paid_signal_count",
+    "published_url_count",
+]
+STRUCTURED_ASSET_FIELDS = [
+    "asset_status",
+    "registry_required",
+    "reuse_count",
+    "proof_of_reuse",
+]
 
 BUILTIN_PLUGIN_SPECS = [
     ("Browser", "openai-bundled/browser/*/skills/control-in-app-browser/SKILL.md"),
@@ -243,6 +296,9 @@ CASE_TYPE_PRESETS = {
         "asset_type": "外部机会验证案例。",
         "asset_reusable_content": "- 研究来源清单。\n- 工具覆盖记录。\n- 反证和替代方案。\n- 决策边界。",
         "decision_default": "基于证据强度决定继续研究、低成本实验、暂停或放弃。",
+        "decision_reason": "- 本 case 只有在研究证据达到 medium 以上时才进入低成本实验。\n- 如果证据仍为 weak / blocked，决策应是继续补证、收窄或暂停，而不是默认继续。",
+        "decision_next_steps": "- 补齐研究质量门四类来源。\n- 把结论改成继续 / 收窄 / 暂停 / 放弃之一。\n- 只有出现真实发布、访谈、评论或指标时，才更新真实反馈。",
+        "decision_boundary": "真实反馈、发布渠道和外部来源如果没有实际覆盖，只能写成证据缺口，不能证明市场需求。",
         "report_boundary": "真实反馈、发布渠道和外部来源如果没有实际覆盖，只能写成证据缺口，不能证明市场需求。",
         "candidate_capability_rows": "| Skill: signalproof | 是 | 是 | 中 | repo 级 skill 提供本地流程规则。 | 保留。 |\n| Skill: personal-opportunity-os | 视主题而定 | 待定 | 弱 | 仅当上层个人机会系统方向会影响判断时使用。 | 按主题决定。 |\n| Skill: last30days | 视研究主题而定 | 待定 | 弱 | 真实趋势 case 需要运行；内部结构 case 可跳过但要写原因。 | 对真实趋势 case 用较新 Python 运行。 |\n| Browser | 视产物而定 | 待定 | 弱 | 适合验证网页、公开页面或本地报告预览。 | 有网页验收目标时使用。 |\n| Computer Use | 视 GUI 而定 | 待定 | 弱 | 适合 GUI-only 验收。 | 有 GUI 验收目标时使用。 |\n| Plugin | 是 | 待定 | 弱 | 先判断插件是否会改变判断或验收产物。 | 按 case 选择，不默认全跑。 |\n| MCP | 视证据源而定 | 待定 | 弱 | 可接官方文档、GitHub 或 Context7 等能力。 | 需要结构化外部来源时使用。 |",
         "tool_research_rows": "| 公开讨论 | 待定 | weak | 需要目标用户原话、抱怨、采用或反对意见；X API credits 默认暂缺但非阻断。 | 优先补 last30days / HN / Reddit / YouTube / GitHub；必要时再提醒补 X。 |\n| 项目和数据 | 待定 | weak | 需要 GitHub、下载、访问、流量或产品指标。 | 补 GitHub / Hugging Face / Similarweb / Semrush。 |\n| 官方和一手资料 | 待定 | weak | 需要官方文档、API、价格、论文或一手说明。 | 补官方文档 / OpenAI Docs / PDF。 |\n| 反证和替代方案 | 待定 | weak | 需要成熟替代、失败案例或低意愿证据。 | 补 Scite / Readwise / Zotero / 竞品文档。 |\n| 结论许可 | 待定 | weak | weak 只能支持继续研究或低成本内部实验。 | 证据未升到 medium/strong 前不写产品化。 |",
@@ -267,6 +323,9 @@ CASE_TYPE_PRESETS = {
         "asset_type": "内部流程审计和机制优化案例。",
         "asset_reusable_content": "- 严格检查未完成占位标记的脚本规则。\n- `internal-audit` case 类型。\n- 中文 case 记录模板。\n- 复核原报告时区分“已落地机制”和“仍是建议”的判断口径。",
         "decision_default": "继续使用当前工作流，但把本轮发现的缺口落实为确定性检查和模板约束。",
+        "decision_reason": "- 本轮目标是优化个人工作流和 SignalProof 机制，不是外部机会验证。\n- 内部流程反馈只能证明机制是否更好用，不能证明市场需求。",
+        "decision_next_steps": "- 如果本 case 暴露流程缺口，把缺口写入 `flow-review.md`。\n- 如果缺口可脚本化，更新 `scripts/signalproof.py`、模板或协议文档。\n- 如果下一步涉及真实机会，另开外部机会 case。",
+        "decision_boundary": "真实反馈为空，内部流程测试不能写成市场验证、产品化或 SaaS 结论。",
         "report_boundary": "本报告只证明内部工作流机制完成一次优化，不证明外部用户需求、市场采用或产品化可行性。",
         "candidate_capability_rows": "| Skill: signalproof | 是 | 是 | 强 | 已读取 repo skill，确认必需 case 文件、插件记录、真实反馈和验证命令规则。 | 保留为默认入口。 |\n| Skill: user-working-profile | 是 | 是 | 强 | 已读取用户偏好，确认中文、边界、证据和少追问多执行。 | 保留。 |\n| Memory | 是 | 是 | 中 | 用于复核历史 SignalProof 方向和插件审计口径；只作上下文，不替代当前仓库证据。 | 需要历史口径时轻量使用。 |\n| last30days | 条件相关 | 未使用 | 中 | 本 case 是内部工作流机制审计，外部趋势不会改变脚本和模板判断。 | 真实外部机会 case 再运行。 |\n| Browser / Chrome | 条件相关 | 未使用 | 中 | 本轮没有网页、登录态或报告预览验收目标。 | 有页面验收时再用。 |\n| Computer Use | 条件相关 | 未使用 | 中 | 本轮没有 GUI-only 验收目标。 | 有本地 App 操作验收时再用。 |\n| Record & Replay | 条件相关 | 未使用 | 中 | 本轮没有用户演示录制目标。 | 需要沉淀操作流程时再用。 |\n| Documents / PDF / Spreadsheets / Presentations | 条件相关 | 未使用 | 中 | 本轮产物是 Markdown、模板和 Python 脚本。 | 正式资料包或格式产物再用。 |\n| Plugin / MCP | 是 | 使用本地脚本和已读插件流程文档 | 中 | 记录安装、暴露、授权、证据质量分层；没有默认全跑外部 connector。 | 具体 case 再做只读探针。 |",
         "tool_research_rows": "| 公开讨论 | 覆盖当前用户任务，未做外部扩散扫描 | weak | 本轮是内部流程审计，公开讨论不构成市场证据。 | 真实机会 case 再补。 |\n| 项目和数据 | 已覆盖仓库文件、脚本、模板、case 和 runs | strong | 可判断本地机制是否真实改变。 | 继续用脚本验证。 |\n| 官方和一手资料 | 已覆盖 AGENTS、repo skill、协议和质量门文档 | strong | 本轮按用户指定文档执行。 | 官方联网事实变更时再查。 |\n| 反证和替代方案 | 已覆盖原报告缺口、strict 漏检占位风险、connector 授权缺口 | medium | 反证足以支持新增脚本 gate。 | 后续 connector case 再探针。 |\n| 结论许可 | 已覆盖 | medium | 只允许内部机制优化和低成本实验。 | 不写市场验证。 |",
@@ -301,6 +360,74 @@ def write_text(path: Path, text: str) -> None:
 
 def has_phrase(text: str, pattern: str) -> bool:
     return re.search(pattern, text, flags=re.IGNORECASE) is not None
+
+
+def parse_frontmatter(text: str) -> dict[str, str]:
+    if not text.startswith("---\n"):
+        return {}
+    end = text.find("\n---", 4)
+    if end == -1:
+        return {}
+    fields: dict[str, str] = {}
+    for raw_line in text[4:end].splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        value = value.strip().strip('"').strip("'")
+        fields[key.strip()] = value
+    return fields
+
+
+def parse_int_field(fields: dict[str, str], key: str, warnings: list[str], filename: str) -> int | None:
+    raw_value = fields.get(key, "")
+    if raw_value == "":
+        return None
+    try:
+        return int(raw_value)
+    except ValueError:
+        warnings.append(f"{filename} frontmatter field `{key}` must be an integer")
+        return None
+
+
+def missing_frontmatter_fields(fields: dict[str, str], required: list[str]) -> list[str]:
+    return [key for key in required if fields.get(key, "") == ""]
+
+
+def normalize_scalar(value: str) -> str:
+    return value.strip().strip("`").strip().lower()
+
+
+def parse_asset_registry_rows() -> list[dict[str, str]]:
+    if not ASSET_REGISTRY.exists():
+        return []
+    rows: list[dict[str, str]] = []
+    headers: list[str] = []
+    for raw_line in read_text(ASSET_REGISTRY).splitlines():
+        line = raw_line.strip()
+        if not line.startswith("|") or "---" in line:
+            continue
+        cells = [cell.strip().strip("`") for cell in line.strip("|").split("|")]
+        if not headers:
+            headers = cells
+            continue
+        if len(cells) != len(headers):
+            continue
+        rows.append(dict(zip(headers, cells)))
+    return rows
+
+
+def asset_registry_contains(asset_text: str) -> bool:
+    rows = parse_asset_registry_rows()
+    if not rows:
+        return False
+    lowered_asset = asset_text.lower()
+    for row in rows:
+        for key in ("asset_id", "title"):
+            value = normalize_scalar(row.get(key, ""))
+            if value and value.lower() in lowered_asset:
+                return True
+    return False
 
 
 def scrub_boundaries(text: str) -> str:
@@ -358,6 +485,22 @@ def slugify(title: str) -> str:
 
 def today_slug(title: str) -> str:
     return f"{date.today().isoformat()}-{slugify(title)}"
+
+
+def case_mode_for(case_dir: Path) -> str:
+    signal_path = case_dir / "signal.md"
+    if not signal_path.exists():
+        return "full"
+    match = re.search(r"^case_mode:\s*([a-zA-Z0-9_-]+)\s*$", read_text(signal_path), flags=re.MULTILINE)
+    if match and match.group(1) == "lite":
+        return "lite"
+    return "full"
+
+
+def required_files_for(case_dir: Path) -> list[str]:
+    if case_mode_for(case_dir) == "lite":
+        return LITE_REQUIRED_FILES
+    return REQUIRED_FILES
 
 
 def diagnose(_: argparse.Namespace | None = None) -> int:
@@ -835,12 +978,14 @@ def init_case(args: argparse.Namespace) -> int:
         "slug": slug,
         "title": args.title,
         "case_type": args.case_type,
+        "case_mode": args.case_mode,
         "signal": args.signal or args.title,
         "created_at": date.today().isoformat(),
         "assumed_feedback": "yes" if args.assumed_feedback else "no",
     }
     context.update(preset)
-    for name in REQUIRED_FILES:
+    required_files = LITE_REQUIRED_FILES if args.case_mode == "lite" else REQUIRED_FILES
+    for name in required_files:
         path = case_dir / name
         if path.exists() and not args.force:
             continue
@@ -874,7 +1019,8 @@ def check_case(case_dir: Path) -> CaseCheck:
     if not case_dir.is_dir():
         return CaseCheck(slug, case_dir, [f"not a directory: {case_dir}"], [])
 
-    for name in REQUIRED_FILES:
+    required_files = required_files_for(case_dir)
+    for name in required_files:
         path = case_dir / name
         if not path.exists():
             errors.append(f"missing required file: {name}")
@@ -927,6 +1073,17 @@ def check_case(case_dir: Path) -> CaseCheck:
         for term, patterns in RESEARCH_GATE_TERMS.items():
             if not any(has_phrase(research, pattern) for pattern in patterns):
                 warnings.append(f"research.md missing research gate term: {term}")
+        check_research_frontmatter(research, warnings)
+
+    if feedback_path.exists():
+        feedback = read_text(feedback_path)
+        decision = read_text(decision_path) if decision_path.exists() else ""
+        check_feedback_frontmatter(feedback, decision, errors, warnings)
+
+    asset_path = case_dir / "asset.md"
+    if asset_path.exists():
+        asset = read_text(asset_path)
+        check_asset_frontmatter(asset, errors, warnings)
 
     if process_log_path.exists():
         process = read_text(process_log_path)
@@ -940,6 +1097,85 @@ def check_case(case_dir: Path) -> CaseCheck:
             errors.append(f"empty optional file: {name}")
 
     return CaseCheck(slug, case_dir, errors, warnings)
+
+
+def check_research_frontmatter(text: str, warnings: list[str]) -> None:
+    fields = parse_frontmatter(text)
+    missing = missing_frontmatter_fields(fields, STRUCTURED_RESEARCH_FIELDS)
+    if missing:
+        warnings.append("research.md missing structured frontmatter field(s): " + ", ".join(missing))
+        return
+
+    evidence_grade = normalize_scalar(fields["evidence_grade"])
+    permission = normalize_scalar(fields["permission"])
+    if evidence_grade not in ALLOWED_EVIDENCE_GRADES:
+        warnings.append("research.md frontmatter `evidence_grade` must be strong / medium / weak / blocked")
+    if permission not in ALLOWED_RESEARCH_PERMISSIONS:
+        warnings.append("research.md frontmatter `permission` must be continue-research / low-cost-experiment / pause / abandon")
+
+    source_types = parse_int_field(fields, "source_types_covered", warnings, "research.md")
+    primary_sources = parse_int_field(fields, "primary_source_count", warnings, "research.md")
+    external_quotes = parse_int_field(fields, "external_quote_count", warnings, "research.md")
+    counterevidence = parse_int_field(fields, "counterevidence_count", warnings, "research.md")
+    parse_int_field(fields, "independent_source_count", warnings, "research.md")
+
+    if permission == "low-cost-experiment":
+        if source_types is None or source_types < 2:
+            warnings.append("research.md `permission=low-cost-experiment` requires source_types_covered >= 2")
+        if counterevidence is None or counterevidence < 1:
+            warnings.append("research.md `permission=low-cost-experiment` requires counterevidence_count >= 1")
+    if evidence_grade == "strong":
+        if source_types is None or source_types < 3:
+            warnings.append("research.md `evidence_grade=strong` requires source_types_covered >= 3")
+        source_or_quote_count = (primary_sources or 0) + (external_quotes or 0)
+        if source_or_quote_count < 1:
+            warnings.append("research.md `evidence_grade=strong` requires primary_source_count + external_quote_count >= 1")
+
+
+def check_feedback_frontmatter(text: str, decision: str, errors: list[str], warnings: list[str]) -> None:
+    fields = parse_frontmatter(text)
+    missing = missing_frontmatter_fields(fields, STRUCTURED_FEEDBACK_FIELDS)
+    if missing:
+        warnings.append("feedback.md missing structured frontmatter field(s): " + ", ".join(missing))
+        return
+
+    feedback_status = normalize_scalar(fields["feedback_status"])
+    validation_status = normalize_scalar(fields["validation_status"])
+    if feedback_status not in ALLOWED_FEEDBACK_STATUS:
+        warnings.append("feedback.md frontmatter `feedback_status` has unsupported value")
+    if validation_status not in ALLOWED_VALIDATION_STATUS:
+        warnings.append("feedback.md frontmatter `validation_status` has unsupported value")
+
+    parse_int_field(fields, "real_feedback_count", warnings, "feedback.md")
+    parse_int_field(fields, "paid_signal_count", warnings, "feedback.md")
+    parse_int_field(fields, "published_url_count", warnings, "feedback.md")
+
+    if feedback_status in NON_REAL_FEEDBACK_STATUS and has_overclaim(decision):
+        errors.append("decision.md overclaims despite non-real feedback_status")
+    if validation_status == "published" and feedback_status in NON_REAL_FEEDBACK_STATUS:
+        warnings.append("feedback.md `validation_status=published` is not externally-observed; keep published-no-feedback separate from validation")
+
+
+def check_asset_frontmatter(text: str, errors: list[str], warnings: list[str]) -> None:
+    fields = parse_frontmatter(text)
+    missing = missing_frontmatter_fields(fields, STRUCTURED_ASSET_FIELDS)
+    if missing:
+        warnings.append("asset.md missing structured frontmatter field(s): " + ", ".join(missing))
+        return
+
+    asset_status = normalize_scalar(fields["asset_status"])
+    if asset_status not in ALLOWED_ASSET_STATUS:
+        warnings.append("asset.md frontmatter `asset_status` has unsupported value")
+
+    reuse_count = parse_int_field(fields, "reuse_count", warnings, "asset.md")
+    proof_of_reuse = normalize_scalar(fields.get("proof_of_reuse", ""))
+    if asset_status == "reused":
+        if reuse_count is None or reuse_count < 1:
+            warnings.append("asset.md `asset_status=reused` requires reuse_count >= 1")
+        if proof_of_reuse in {"", "none"}:
+            warnings.append("asset.md `asset_status=reused` requires proof_of_reuse != none")
+    if asset_status in {"registered", "reused"} and not asset_registry_contains(text):
+        errors.append("asset.md claims registered/reused but registry has no matching asset_id or title")
 
 
 def print_check(check: CaseCheck) -> None:
@@ -960,8 +1196,108 @@ def check_all(_: argparse.Namespace) -> int:
     for check in checks:
         print_check(check)
     failed = [check for check in checks if not check.ok]
-    print(f"Checked {len(checks)} case(s), failures: {len(failed)}")
+    warning_count = sum(len(check.warnings) for check in checks)
+    if failed:
+        overall = "failed"
+    elif warning_count:
+        overall = "passed-with-warnings"
+    else:
+        overall = "passed"
+    print(f"Checked {len(checks)} case(s), failures: {len(failed)}, warnings: {warning_count}")
+    print(f"Overall status: {overall}")
     return 1 if failed else 0
+
+
+def row_int(row: dict[str, str], key: str) -> int:
+    value = normalize_scalar(row.get(key, ""))
+    if value in {"", "none", "unknown"}:
+        return 0
+    try:
+        return int(value)
+    except ValueError:
+        return 0
+
+
+def check_assets(args: argparse.Namespace) -> int:
+    errors: list[str] = []
+    warnings: list[str] = []
+    if not ASSET_REGISTRY.exists():
+        errors.append("registry does not exist: vault/assets/registry.md")
+        rows: list[dict[str, str]] = []
+    else:
+        rows = parse_asset_registry_rows()
+
+    required_columns = {
+        "asset_id",
+        "title",
+        "type",
+        "source_case",
+        "strength",
+        "usable_for",
+        "last_used_by",
+        "reuse_count",
+        "proof_of_reuse",
+        "reuse_cost_minutes",
+        "preconditions",
+        "public_or_private",
+        "supersedes",
+        "owner_scope",
+        "next_action",
+    }
+    if ASSET_REGISTRY.exists():
+        text = read_text(ASSET_REGISTRY)
+        header_line = next((line for line in text.splitlines() if line.startswith("| asset_id |")), "")
+        headers = {cell.strip() for cell in header_line.strip("|").split("|")} if header_line else set()
+        missing_columns = sorted(required_columns - headers)
+        if missing_columns:
+            errors.append("asset registry missing column(s): " + ", ".join(missing_columns))
+
+    registered_assets = len(rows)
+    reused_assets = 0
+    candidate_assets = 0
+    zero_reuse_assets = 0
+    strong_zero_reuse: list[str] = []
+
+    for row in rows:
+        asset_id = row.get("asset_id", "")
+        reuse_count = row_int(row, "reuse_count")
+        last_used_by = normalize_scalar(row.get("last_used_by", ""))
+        proof_of_reuse = normalize_scalar(row.get("proof_of_reuse", ""))
+        strength = normalize_scalar(row.get("strength", ""))
+        asset_status = normalize_scalar(row.get("asset_status", ""))
+
+        if reuse_count > 0 or proof_of_reuse not in {"", "none", "unknown"}:
+            reused_assets += 1
+        if asset_status == "candidate" or reuse_count == 0:
+            candidate_assets += 1
+        if reuse_count == 0 or last_used_by in {"", "none", "unknown"}:
+            zero_reuse_assets += 1
+            warnings.append(f"{asset_id or row.get('title', 'unknown asset')} has no proven reuse")
+            if strength == "strong":
+                strong_zero_reuse.append(asset_id or row.get("title", "unknown asset"))
+
+    if getattr(args, "strict", False) and strong_zero_reuse:
+        errors.append("strong asset(s) with reuse_count=0 or last_used_by=none: " + ", ".join(strong_zero_reuse))
+
+    ratio = (zero_reuse_assets / registered_assets * 100) if registered_assets else 0.0
+    if errors:
+        status = "failed"
+    elif warnings:
+        status = "passed-with-warnings"
+    else:
+        status = "passed"
+
+    print(f"registered_assets: {registered_assets}")
+    print(f"reused_assets: {reused_assets}")
+    print(f"candidate_assets: {candidate_assets}")
+    print(f"zero_reuse_assets: {zero_reuse_assets}")
+    print(f"zero_reuse_ratio: {ratio:.1f}%")
+    print(f"status: {status}")
+    for error in errors:
+        print(f"ERROR: {error}")
+    for warning in warnings:
+        print(f"WARNING: {warning}")
+    return 1 if errors else 0
 
 
 def resolve_case_dir(case: str) -> Path:
@@ -1006,7 +1342,12 @@ def list_cases(_: argparse.Namespace) -> int:
 
 
 def export_case(case_dir: Path) -> Path:
-    parts = [f"# SignalProof 案例报告：{case_dir.name}\n"]
+    parts = [
+        f"# SignalProof 案例报告：{case_dir.name}\n",
+        "\n## 0. 决策先行\n\n",
+        decision_summary(case_dir),
+        "\n\n## 1. 详细记录\n",
+    ]
     for filename, heading in SECTIONS:
         path = case_dir / filename
         if not path.exists():
@@ -1018,6 +1359,84 @@ def export_case(case_dir: Path) -> Path:
     report_path = REPORTS / f"{case_dir.name}.md"
     write_text(report_path, "".join(parts))
     return report_path
+
+
+def clean_markdown(text: str) -> str:
+    text = re.sub(r"^---\n.*?\n---\n", "", text, flags=re.DOTALL)
+    text = re.sub(r"^# .*$", "", text, count=1, flags=re.MULTILINE)
+    return text.strip()
+
+
+def section_body(text: str, headings: list[str]) -> str:
+    cleaned = clean_markdown(text)
+    for heading in headings:
+        pattern = r"^##\s+" + re.escape(heading) + r"\s*$\n(?P<body>.*?)(?=^##\s+|\Z)"
+        match = re.search(pattern, cleaned, flags=re.MULTILINE | re.DOTALL)
+        if match and match.group("body").strip():
+            return match.group("body").strip()
+    return ""
+
+
+def summarize_block(text: str, max_lines: int = 4) -> str:
+    lines = []
+    in_fence = False
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if line.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or not line or line.startswith("| ---"):
+            continue
+        lines.append(line)
+        if len(lines) >= max_lines:
+            break
+    return "\n".join(lines) if lines else "未记录"
+
+
+def frontmatter_value(text: str, key: str) -> str:
+    match = re.search(r"^" + re.escape(key) + r":\s*(.+?)\s*$", text, flags=re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
+def file_section_summary(case_dir: Path, filename: str, headings: list[str], fallback: str = "未记录") -> str:
+    path = case_dir / filename
+    if not path.exists():
+        return fallback
+    body = section_body(read_text(path), headings)
+    return summarize_block(body) if body else fallback
+
+
+def decision_summary(case_dir: Path) -> str:
+    signal_text = read_text(case_dir / "signal.md") if (case_dir / "signal.md").exists() else ""
+    research_text = read_text(case_dir / "research.md") if (case_dir / "research.md").exists() else ""
+    decision_text = read_text(case_dir / "decision.md") if (case_dir / "decision.md").exists() else ""
+    feedback_text = read_text(case_dir / "feedback.md") if (case_dir / "feedback.md").exists() else ""
+
+    signal = summarize_block(section_body(signal_text, ["原始信号"]), max_lines=2) if signal_text else "未记录"
+    decision = summarize_block(section_body(decision_text, ["决策", "决策结论"]), max_lines=3) if decision_text else "未记录"
+    evidence = summarize_block(section_body(research_text, ["证据等级", "证据强度", "证据质量"]), max_lines=4) if research_text else "未记录"
+    if evidence == "未记录" and research_text:
+        gate = frontmatter_value(research_text, "gate")
+        evidence = gate or "未记录"
+    feedback = summarize_block(section_body(feedback_text, ["当前反馈状态", "反馈状态", "真实反馈"]), max_lines=2) if feedback_text else "lite case 未进入反馈阶段"
+    next_action = file_section_summary(case_dir, "decision.md", ["下一步", "下一步优先级"], fallback="未记录")
+    asset = file_section_summary(case_dir, "asset.md", ["资产名称", "可复用资产", "复用资产", "可复用内容"], fallback="未记录")
+    mode = case_mode_for(case_dir)
+    if mode == "lite":
+        boundary = "lite case 只用于快速判断和资产候选，不代表完整 SignalProof proof；真实反馈为空时不能写成市场验证。"
+    else:
+        boundary = "full case 只证明本轮已覆盖完整 SignalProof 记录；真实反馈为空时仍不能写成市场验证。"
+
+    return "\n".join([
+        f"- case_mode：`{mode}`",
+        f"- 信号：{signal}",
+        f"- 决策：{decision}",
+        f"- 证据等级：{evidence}",
+        f"- 反馈状态：{feedback}",
+        f"- 可复用资产：{asset}",
+        f"- 下一步：{next_action}",
+        f"- 边界：{boundary}",
+    ])
 
 
 def export_all(_: argparse.Namespace) -> int:
@@ -1115,6 +1534,10 @@ def check_goal(args: argparse.Namespace) -> int:
             errors.append("scripts/install-codex-plugins.sh must say credentials are not migrated")
     if not (RUNS / f"{date.today().isoformat()}-codex-plugin-status.md").exists():
         errors.append("missing today's Codex plugin status; run plugin-status")
+    if not ASSET_REGISTRY.exists():
+        errors.append("missing vault/assets/registry.md")
+    elif len(re.findall(r"^\| `[^`]+` \|", read_text(ASSET_REGISTRY), flags=re.MULTILINE)) < 3:
+        errors.append("vault/assets/registry.md has too few registered reusable assets")
     drift_text, drift_errors, _drift_warnings = plugin_drift_report(run_codex=False)
     write_text(RUNS / f"{date.today().isoformat()}-plugin-drift-check.md", drift_text)
     errors.extend(drift_errors)
@@ -1265,6 +1688,9 @@ def main(argv: list[str] | None = None) -> int:
     case_check.add_argument("--strict", action="store_true", help="Treat warnings as failures for new or actively maintained cases.")
     case_check.set_defaults(func=check_case_command)
     sub.add_parser("check-all", help="Check all cases.").set_defaults(func=check_all)
+    assets = sub.add_parser("check-assets", help="Check asset registry reuse ledger.")
+    assets.add_argument("--strict", action="store_true", help="Fail if strong assets do not have proven reuse.")
+    assets.set_defaults(func=check_assets)
     sub.add_parser("export-all", help="Export all case reports.").set_defaults(func=export_all)
     goal = sub.add_parser("check-goal", help="Check MVP goal evidence.")
     goal.add_argument("--min-cases", type=int, default=5)
@@ -1275,6 +1701,7 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument("--slug")
     init.add_argument("--signal")
     init.add_argument("--case-type", default="external-opportunity", choices=sorted(CASE_TYPE_PRESETS))
+    init.add_argument("--case-mode", default="full", choices=["full", "lite"], help="Use lite for fast signal-to-decision screening; full for complete SignalProof proof cases.")
     init.add_argument("--assumed-feedback", action="store_true")
     init.add_argument("--force", action="store_true")
     init.set_defaults(func=init_case)

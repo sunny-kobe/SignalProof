@@ -1,5 +1,19 @@
 # SignalProof 案例报告：2026-06-20-codex-plugin-skill-orchestration-boundary
 
+## 0. 决策先行
+
+- case_mode：`full`
+- 信号：SignalProof 应该成为一个 Codex skill/plugin 包，用来协调其他能力，但不能假装自己能像代码 API 一样直接调用所有插件。
+- 决策：继续内部协议验证。
+- 证据等级：- 内部流程证据：中到强。
+- 外部市场证据：弱或为空。
+- 反馈状态：真实反馈为空。
+- 可复用资产：可复用资产：Codex 能力地图和插件骨架。
+- 下一步：未记录
+- 边界：full case 只证明本轮已覆盖完整 SignalProof 记录；真实反馈为空时仍不能写成市场验证。
+
+## 1. 详细记录
+
 ## 信号
 
 ---

@@ -1,6 +1,8 @@
 # 当前执行流程
 
-这份文档记录 SignalProof 现在每个流程是怎么跑的，以及重启后推荐插件进入个人工作流的实际接入点。
+这份文档记录 `SignalProof 个人证据协议` 现在每个流程是怎么跑的。V0.2 的核心是本地 Markdown vault + Python 标准库脚本；插件治理降级为候选能力治理，不再制造“系统 ready”的错觉。
+
+当前不做 Web App、SaaS dashboard、workflow builder、通用知识库、自动雷达、n8n/Dify、Notion/Obsidian 集成。
 
 ## 1. 能力诊断
 
@@ -22,7 +24,7 @@ python3 scripts/signalproof.py diagnose
 - 这是环境诊断，不代表研究证据合格。
 - 如果某个来源失败，只能写成能力缺口，不能写成反证。
 
-## 2. Codex 能力矩阵
+## 2. Codex 候选能力矩阵
 
 命令：
 
@@ -33,7 +35,7 @@ python3 scripts/signalproof.py capabilities
 作用：
 
 - 检测本机可用的 Codex 自带插件；
-- 输出阶段到插件的能力矩阵；
+- 输出阶段到插件的候选能力矩阵；
 - 写入 `vault/runs/<date>-codex-capability-matrix.md`。
 
 当前插件候选分两层：
@@ -143,18 +145,19 @@ python3 scripts/signalproof.py plugin-status
 命令：
 
 ```bash
-python3 scripts/signalproof.py init-case "<title>"
+python3 scripts/signalproof.py init-case "<title>" --case-mode lite
 ```
 
 作用：
 
-- 从 `templates/case/` 创建完整案例文件；
-- 必需文件包括 `signal.md`、`research.md`、`debate.md`、`thesis.md`、`validation.md`、`artifact.md`、`feedback.md`、`decision.md`、`asset.md`、`flow-review.md`、`tool-ledger.md`、`process-log.md`、`report.md`。
+- 新外部机会默认创建 lite case，只生成 `signal.md`、`research.md`、`debate.md`、`decision.md`、`asset.md`。
+- internal-audit 或明确满足升级条件的 case 才使用 `--case-mode full`。
 
 当前边界：
 
 - `init-case` 只生成结构，不自动判断证据；
 - 是否调用插件由阶段能力计划决定。
+- full 升级必须在 `decision.md` 说明理由，不能为了完整而完整。
 
 ## 5. Seed 示例案例
 
@@ -194,6 +197,27 @@ python3 scripts/signalproof.py check-all
 
 - 它是结构和风险语言检查；
 - 不替代真实市场验证。
+- `check-all` 会输出 `Overall status: passed / passed-with-warnings / failed`，历史 warning 不再被误读成全绿。
+
+## 6.1 资产复用检查
+
+命令：
+
+```bash
+python3 scripts/signalproof.py check-assets
+```
+
+作用：
+
+- 检查 `vault/assets/registry.md` 是否是复用账本；
+- 统计 registered、reused、candidate 和 zero reuse 资产；
+- 暴露 `reuse_count=0` 或 `last_used_by=none` 的候选资产比例。
+
+当前边界：
+
+- zero reuse 是 warning，不默认失败；
+- `--strict` 下，`strength=strong` 但没有复用证据的资产会失败；
+- 资产复用不足不能靠命名解决，必须有后续 case、模板、脚本或产物引用。
 
 ## 7. 导出报告
 
