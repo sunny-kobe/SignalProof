@@ -112,6 +112,36 @@ CTA：
 | AI Coding Agent 边界卡 | `vault/assets/content-commerce/2026-06-22-ai-coding-agent-boundary-publish-draft-v0.md` | 已压成技术栏目发布草稿；发布当天补 AI 标识入口和领取方式 |
 | 免费资料包样例 | `vault/assets/content-commerce/2026-06-22-overseas-ai-signal-assets-free-pack-v0.md` | 发布前决定领取方式：评论关键词、私信或临时网盘 |
 
+## 首发执行单：AI Slop 真实性检查表
+
+当前下一步是人工发布，不再继续内部打磨。发布前只做一次最小复核：
+
+| 顺序 | 动作 | 通过标准 | 当前状态 |
+| --- | --- | --- | --- |
+| 1 | 复制首发草稿 | 使用 `2026-06-22-xhs-ai-slop-trust-publish-draft-v0.md` 的标题、8 张卡片文案、正文和标签 | ready |
+| 2 | 制作或排版 8 张图文卡片 | 不使用未授权截图、人脸、人声或付费资料；卡片保留来源类别和“不等于市场验证”边界 | manual-needed |
+| 3 | 在小红书后台确认 AI 标识入口 | 如果图文或文案使用 AI 辅助生成，按平台入口主动声明或标识 | manual-needed |
+| 4 | 发布正文 | 正文保留“当前没有发布反馈，不能说市场验证”边界 | manual-needed |
+| 5 | 截取或记录发布 URL | 有真实 URL 后才能把 `published_url_count` 从 `0` 改成 `1` | blocked-on-publish |
+| 6 | 24/72 小时回填数据 | 只记录平台后台和真实互动数据；不要把内部判断写成外部反馈 | blocked-on-publish |
+
+最小发布口径：
+
+- 标题：`别再发一眼 AI 味内容了：7 个真实性检查`
+- 评论关键词：`真实性`
+- 资料包交付：发布后再决定具体领取方式；未配置自动回复前，只能写“后续整理领取方式”。
+- 当前结论：发布前为 `feedback_status: none`；发布后无反馈时只能进入 `published-no-feedback`。
+
+发布后要同步回填这些文件：
+
+| 文件 | 回填内容 |
+| --- | --- |
+| `vault/assets/content-commerce/2026-06-22-publishing-prep-and-feedback-ledger-v0.md` | 平台、发布时间、URL、AI 标识方式、24/72 小时数据 |
+| `vault/assets/content-commerce/2026-06-22-xhs-ai-slop-trust-publish-draft-v0.md` | 发布后回填表、frontmatter 的 `validation_status` / `feedback_status` / `published_url_count` |
+| `vault/assets/registry.md` | `xhs-ai-slop-trust-publish-draft-v0` 的 `last_used_by`、`reuse_count`、`proof_of_reuse`、`next_action` |
+
+只有出现真实收藏、评论、私信、资料包领取、关注或付费意向时，才更新相关 case 的反馈结论。单纯发布 URL 只说明外部动作发生，不说明需求成立。
+
 ## 72 小时反馈台账
 
 发布后只记录真实外部反馈。没有发布就保持 `none`。
