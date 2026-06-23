@@ -158,6 +158,7 @@ python3 scripts/signalproof.py init-case "<title>" --case-mode lite
 - `init-case` 只生成结构，不自动判断证据；
 - 是否调用插件由阶段能力计划决定。
 - full 升级必须在 `decision.md` 说明理由，不能为了完整而完整。
+- lite case 的资产被发布后，先在发布资产、发布台账、`asset.md` 或 `decision.md` 记录 URL 与状态；不要因为有发布动作就补齐 full-only 文件。只有满足 full 升级硬条件时，才补 `feedback.md` 等完整 proof 文件。
 
 ## 5. Seed 示例案例
 

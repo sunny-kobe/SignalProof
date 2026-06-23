@@ -140,7 +140,7 @@ CTA：
 | `vault/assets/content-commerce/2026-06-22-xhs-ai-slop-trust-publish-draft-v0.md` | 发布后回填表、frontmatter 的 `validation_status` / `feedback_status` / `published_url_count` |
 | `vault/assets/registry.md` | `xhs-ai-slop-trust-publish-draft-v0` 的 `last_used_by`、`reuse_count`、`proof_of_reuse`、`next_action` |
 
-只有出现真实收藏、评论、私信、资料包领取、关注或付费意向时，才更新相关 case 的反馈结论。单纯发布 URL 只说明外部动作发生，不说明需求成立。
+当前首发来源是 lite case，默认没有 `feedback.md`。只有出现真实收藏、评论、私信、资料包领取、关注或付费意向时，才更新相关 case 的 `decision.md` / `asset.md` 反馈结论；如果后续满足 full 升级硬条件，再补齐 `feedback.md`。单纯发布 URL 只说明外部动作发生，不说明需求成立。
 
 ## 72 小时反馈台账
 
@@ -189,4 +189,4 @@ CTA：
 1. 选择首发内容：优先 `AI Slop 真实性检查表`。
 2. 发布当天核验小红书/公众号后台 AI 标识入口。
 3. 发布后把真实 URL 和 72 小时数据回填到本文件。
-4. 回填后再更新相关 case 的 `feedback.md`，状态可从 `none` 进入 `published-no-feedback` 或真实反馈状态。
+4. 回填后先更新发布资产和资产账本；如果有真实反馈，再更新相关 lite case 的 `decision.md` / `asset.md`。只有满足 full 升级硬条件时，才补齐 `feedback.md`。

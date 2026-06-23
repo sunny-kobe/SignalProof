@@ -45,6 +45,8 @@ SignalProof 分两种 case mode：
 - `lite`：新外部机会的默认模式，用于信号初筛、快速反方判断和资产候选登记。只要求 `signal.md`、`research.md`、`debate.md`、`decision.md`、`asset.md`。lite 的目标是判断是否继续、收窄、暂停、放弃或升级，不代表完整 proof。
 - `full`：有硬条件的升级事件。只有当证据等级至少为 `medium`、存在明确外部动作、至少有一个可登记资产候选，并且 `decision.md` 说明为什么需要 full 时，外部机会才升级为 full。internal-audit 可以使用 full 来记录完整机制改造，但不能写成市场验证。
 
+lite case 的资产可以被发布，但发布 URL 只说明外部动作发生，不自动构成 full proof。发布后先在发布资产、发布台账、`asset.md` 或 `decision.md` 记录 `validation_status=published`、`feedback_status=published-no-feedback` 或真实反馈状态；只有满足 full 升级硬条件时，才补齐 `feedback.md`、`validation.md`、`artifact.md`、`flow-review.md`、`tool-ledger.md`、`process-log.md` 和 `report.md`。
+
 创建轻量 case：
 
 ```bash

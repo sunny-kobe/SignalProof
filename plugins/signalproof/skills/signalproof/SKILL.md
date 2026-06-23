@@ -29,7 +29,7 @@ full case 覆盖：
 - 工具账本；
 - 过程日志。
 
-lite case 不代表完整闭环，不能写成市场验证或完整 proof。
+lite case 不代表完整闭环，不能写成市场验证或完整 proof。lite 资产被发布后，先在发布资产、发布台账、`asset.md` 或 `decision.md` 记录 URL 与状态；不要因为有发布 URL 就强行补 `feedback.md` 或升级 full。
 
 外部机会升级为 full 前必须同时满足：`evidence_grade >= medium`、存在明确外部动作、至少有一个可登记资产候选，并且 `decision.md` 写明为什么需要 full。
 
@@ -38,6 +38,8 @@ lite case 不代表完整闭环，不能写成市场验证或完整 proof。
 真正可复用资产必须登记到 `vault/assets/registry.md`，并在后续 case 使用时更新 `reuse_count`、`proof_of_reuse` 和 `last_used_by`。
 
 除非存在真实用户反馈，否则不要声称市场验证。
+
+full case 的真实反馈可以为空，但 `feedback.md` 必须明确写出来。lite case 默认没有 `feedback.md`，发布后先维护发布资产和资产账本；只有满足 full 升级硬条件时才补齐 `feedback.md`。
 
 每个阶段开始前，先用能力矩阵判断是否需要 Codex 自带插件：
 

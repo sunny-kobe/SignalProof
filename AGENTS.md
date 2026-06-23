@@ -33,7 +33,7 @@
 - `decision.md`
 - `asset.md`
 
-lite case 不代表完整 SignalProof proof，不能写成完整闭环；只有升级为 full case 后才补齐验证、产物、反馈、流程自检、工具账本、过程日志和报告。
+lite case 不代表完整 SignalProof proof，不能写成完整闭环；只有升级为 full case 后才补齐验证、产物、反馈、流程自检、工具账本、过程日志和报告。lite 资产被发布后，先在发布资产、发布台账、`asset.md` 或 `decision.md` 记录 URL 与状态；不能因为出现发布动作就强行补 `feedback.md` 或改成 full。
 
 外部机会升级为 full 前必须同时满足：
 
@@ -80,7 +80,7 @@ python3.14 /Users/rust/.agents/skills/last30days/scripts/last30days.py --diagnos
 
 ## 边界
 
-- 真实反馈可以为空，但 `feedback.md` 必须明确写出来。
+- full case 的真实反馈可以为空，但 `feedback.md` 必须明确写出来。lite case 默认没有 `feedback.md`，发布后先维护发布资产和资产账本；只有满足 full 升级硬条件时才补齐 `feedback.md`。
 - synthetic demo、假设反馈和内部流程反馈不能写成市场验证。
 - 内部工作流优化和插件试跑 case 可以作为个人工作流测试样本保留，但不得混同为外部机会验证。
 - 弱证据只能支持低成本内部实验，不能支持产品化或 SaaS 结论。
