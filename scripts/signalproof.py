@@ -171,6 +171,103 @@ STRUCTURED_ASSET_FIELDS = [
     "reuse_count",
     "proof_of_reuse",
 ]
+ALLOWED_CASE_INTENTS = {
+    "external-opportunity",
+    "product-iteration",
+    "content-iteration",
+    "workflow-improvement",
+    "tool-evaluation",
+    "learning-to-asset",
+}
+ALLOWED_LOOP_PROFILES = {"ai-work-loop-v1"}
+ALLOWED_AGENTIC_LOOP_STATUS = {"required", "optional", "skipped"}
+ALLOWED_DEVELOPER_FEEDBACK_LOOP_STATUS = {"required", "optional", "skipped"}
+ALLOWED_EXTERNAL_FEEDBACK_LOOP_STATUS = {"required", "delayed", "skipped-with-reason"}
+ALLOWED_ASSET_LOOP_STATUS = {"required", "optional", "skipped"}
+STRUCTURED_SIGNAL_FIELDS = [
+    "case_intent",
+    "loop_profile",
+    "agentic_loop",
+    "developer_feedback_loop",
+    "external_feedback_loop",
+    "asset_loop",
+]
+
+CASE_TYPE_DEFAULT_INTENT = {
+    "external-opportunity": "external-opportunity",
+    "internal-audit": "workflow-improvement",
+    "plugin-test": "tool-evaluation",
+}
+
+CASE_INTENT_LOOP_DEFAULTS = {
+    "external-opportunity": {
+        "agentic_loop": "optional",
+        "developer_feedback_loop": "required",
+        "external_feedback_loop": "delayed",
+        "asset_loop": "required",
+    },
+    "product-iteration": {
+        "agentic_loop": "required",
+        "developer_feedback_loop": "required",
+        "external_feedback_loop": "delayed",
+        "asset_loop": "required",
+    },
+    "content-iteration": {
+        "agentic_loop": "optional",
+        "developer_feedback_loop": "required",
+        "external_feedback_loop": "delayed",
+        "asset_loop": "required",
+    },
+    "workflow-improvement": {
+        "agentic_loop": "optional",
+        "developer_feedback_loop": "required",
+        "external_feedback_loop": "skipped-with-reason",
+        "asset_loop": "required",
+    },
+    "tool-evaluation": {
+        "agentic_loop": "optional",
+        "developer_feedback_loop": "required",
+        "external_feedback_loop": "skipped-with-reason",
+        "asset_loop": "required",
+    },
+    "learning-to-asset": {
+        "agentic_loop": "skipped",
+        "developer_feedback_loop": "required",
+        "external_feedback_loop": "skipped-with-reason",
+        "asset_loop": "required",
+    },
+}
+
+LOOP_CAPABILITY_MATRIX = [
+    {
+        "loop": "agentic-coding",
+        "purpose": "把 Product Spec 和 Eval Set 交给 Codex/Claude Code 等 agent，执行构建、测试和回归。",
+        "cadence": "分钟级。",
+        "default_capabilities": "Product Spec、Eval Set、本地脚本、Git、测试命令、Browser/Playwright 验收。",
+        "writes_to": "validation.md、artifact.md、tool-ledger.md、flow-review.md",
+    },
+    {
+        "loop": "developer-feedback",
+        "purpose": "用户用上下文优势和产品判断修正方向、UI、边界和下一轮 spec。",
+        "cadence": "几十分钟到数小时。",
+        "default_capabilities": "debate.md、thesis.md、decision.md、flow-review.md、Codex 子线程反方审查。",
+        "writes_to": "decision.md、flow-review.md、process-log.md",
+    },
+    {
+        "loop": "external-feedback",
+        "purpose": "通过发布、访谈、alpha、A/B、评论、issue 或真实指标回收外部反馈。",
+        "cadence": "小时到周级。",
+        "default_capabilities": "Browser/Chrome、GitHub、PostHog/Mixpanel/Amplitude、Spreadsheets、人工反馈输入。",
+        "writes_to": "feedback.md、day2-execution.md、tool-ledger.md",
+    },
+    {
+        "loop": "asset-meta",
+        "purpose": "把本轮可复用内容沉淀成模板、检查表、脚本、skill、资料包或复用账本条目。",
+        "cadence": "每个 case 阶段结束时。",
+        "default_capabilities": "asset.md、vault/assets/registry.md、Record & Replay、Documents/PDF/Spreadsheets/Presentations。",
+        "writes_to": "asset.md、vault/assets/registry.md、flow-review.md",
+    },
+]
 
 BUILTIN_PLUGIN_SPECS = [
     ("Browser", "openai-bundled/browser/*/skills/control-in-app-browser/SKILL.md"),
@@ -280,18 +377,21 @@ CASE_TYPE_PRESETS = {
     "external-opportunity": {
         "case_type_label": "外部机会验证",
         "why_enter_flow": "- 这条信号可能对应外部真实问题，需要用来源覆盖、交叉验证和反证来判断是否继续。\n- 本 case 必须把真实反馈、公开来源证据和内部推断分开。",
-        "initial_users": "- 目标用户：待补，必须用公开讨论、真实反馈或一手资料确认。\n- 如果暂时无法确认，只能写成假设人群。",
+        "initial_users": "- 目标用户：未覆盖，必须用公开讨论、真实反馈或一手资料确认。\n- 如果暂时无法确认，只能写成假设人群。",
         "current_boundary": "- 不声称市场验证。\n- 不默认产品化。\n- 不做 SaaS 或 dashboard。\n- weak / blocked 证据只能支持继续研究或低成本内部实验。",
         "research_process": "- 先读取本地协议、质量门和相关 case。\n- 再按研究质量门补公开讨论、项目和数据、官方和一手资料、反证和替代方案。\n- 如果某类来源没有跑通，写成来源缺口，不能写成反证。",
-        "source_coverage_rows": "| 公开讨论 | last30days / Reddit / HN / X / YouTube / Browser / Chrome | 待补 | weak | 未确认目标用户原话。 |\n| 项目和数据 | GitHub / Hugging Face / Similarweb / Semrush | 待补 | weak | 未确认可核验指标。 |\n| 官方和一手资料 | 官方文档 / OpenAI Docs / PDF / Documents | 待补 | weak | 未确认直接来源。 |\n| 反证和替代方案 | Scite / Readwise / Zotero / 竞品文档 / GitHub issues | 待补 | weak | 未确认强替代或失败风险。 |",
-        "cross_validation": "- 谁在说：待补。\n- 说什么：待补。\n- 在哪里说：待补。\n- 有没有反证：待补。\n- 能支持什么结论：当前只能支持内部流程实验或继续补研究。",
-        "counterevidence": "- 待补成熟替代方案。\n- 待补失败案例或低意愿证据。\n- 待补“用户现在怎么解决”的证据。",
+        "source_coverage_rows": "| 公开讨论 | last30days / Reddit / HN / X / YouTube / Browser / Chrome | 未覆盖 | weak | 未确认目标用户原话。 |\n| 项目和数据 | GitHub / Hugging Face / Similarweb / Semrush | 未覆盖 | weak | 未确认可核验指标。 |\n| 官方和一手资料 | 官方文档 / OpenAI Docs / PDF / Documents | 未覆盖 | weak | 未确认直接来源。 |\n| 反证和替代方案 | Scite / Readwise / Zotero / 竞品文档 / GitHub issues | 未覆盖 | weak | 未确认强替代或失败风险。 |",
+        "cross_validation": "- 谁在说：未覆盖。\n- 说什么：未覆盖。\n- 在哪里说：未覆盖。\n- 有没有反证：未覆盖。\n- 能支持什么结论：当前只能支持内部流程实验或继续补研究。",
+        "counterevidence": "- 未覆盖成熟替代方案。\n- 未覆盖失败案例或低意愿证据。\n- 未覆盖“用户现在怎么解决”的证据。",
         "evidence_grade": "当前为 weak：模板只提供研究结构，不提供已完成证据。完成 case 前必须把本节改成基于真实来源的 strong / medium / weak / blocked 判断。",
         "decision_permission": "当前许可：继续研究。不得写成已验证需求、市场已验证、可以产品化或可以做 SaaS。",
         "next_evidence_steps": "- 补 1 个公开讨论来源。\n- 补 1 个项目或数据指标。\n- 补 1 个官方或一手资料。\n- 补 1 个反证或替代方案。",
         "feedback_empty_reason": "如果本轮没有发布、访谈、评论或指标回收，必须明确写真实反馈为空；不能把内部判断写成市场验证。",
         "validation_object": "这个信号是否能被证据支持到下一步，而不是只被模板完整性支持。",
         "validation_method_steps": "1. 补齐研究质量门四类来源。\n2. 补充工具账本，记录结果质量和跳过原因。\n3. 补充流程日志。\n4. 运行 `python3 scripts/signalproof.py check-case <case-slug> --strict`。\n5. 运行 `python3 scripts/signalproof.py export-all`。\n6. 记录剩余证据缺口。",
+        "product_spec": "- 目标用户：未覆盖。\n- 目标任务：判断这条外部信号是否值得继续。\n- 非目标：不在本轮做产品化、SaaS 或 dashboard。\n- 成功标准：研究证据和决策许可匹配，且不把发布或内部判断写成验证。",
+        "eval_set": "- 通过样例：`research.md` 写明来源覆盖、反证、证据等级和结论许可。\n- 失败样例：只有工具调用记录，却没有判断结果质量。\n- 回归检查：`check-case --strict` 不允许未替换变量、TODO、待补、待定。",
+        "agentic_acceptance": "- agentic loop 本轮为可选；只有当需要生成代码、内容包或工具产物时才启动。\n- 若启动，必须先明确 Product Spec 与 Eval Set，再让 agent 执行。",
         "artifact_summary": "本 case 的产物是一个可复查的 SignalProof 证明案例，可能包含研究包、验证计划、公开产物或内部决策包。",
         "asset_type": "外部机会验证案例。",
         "asset_reusable_content": "- 研究来源清单。\n- 工具覆盖记录。\n- 反证和替代方案。\n- 决策边界。",
@@ -300,9 +400,9 @@ CASE_TYPE_PRESETS = {
         "decision_next_steps": "- 补齐研究质量门四类来源。\n- 把结论改成继续 / 收窄 / 暂停 / 放弃之一。\n- 只有出现真实发布、访谈、评论或指标时，才更新真实反馈。",
         "decision_boundary": "真实反馈、发布渠道和外部来源如果没有实际覆盖，只能写成证据缺口，不能证明市场需求。",
         "report_boundary": "真实反馈、发布渠道和外部来源如果没有实际覆盖，只能写成证据缺口，不能证明市场需求。",
-        "candidate_capability_rows": "| Skill: signalproof | 是 | 是 | 中 | repo 级 skill 提供本地流程规则。 | 保留。 |\n| Skill: personal-opportunity-os | 视主题而定 | 待定 | 弱 | 仅当上层个人机会系统方向会影响判断时使用。 | 按主题决定。 |\n| Skill: last30days | 视研究主题而定 | 待定 | 弱 | 真实趋势 case 需要运行；内部结构 case 可跳过但要写原因。 | 对真实趋势 case 用较新 Python 运行。 |\n| Browser | 视产物而定 | 待定 | 弱 | 适合验证网页、公开页面或本地报告预览。 | 有网页验收目标时使用。 |\n| Computer Use | 视 GUI 而定 | 待定 | 弱 | 适合 GUI-only 验收。 | 有 GUI 验收目标时使用。 |\n| Plugin | 是 | 待定 | 弱 | 先判断插件是否会改变判断或验收产物。 | 按 case 选择，不默认全跑。 |\n| MCP | 视证据源而定 | 待定 | 弱 | 可接官方文档、GitHub 或 Context7 等能力。 | 需要结构化外部来源时使用。 |",
-        "tool_research_rows": "| 公开讨论 | 待定 | weak | 需要目标用户原话、抱怨、采用或反对意见；X API credits 默认暂缺但非阻断。 | 优先补 last30days / HN / Reddit / YouTube / GitHub；必要时再提醒补 X。 |\n| 项目和数据 | 待定 | weak | 需要 GitHub、下载、访问、流量或产品指标。 | 补 GitHub / Hugging Face / Similarweb / Semrush。 |\n| 官方和一手资料 | 待定 | weak | 需要官方文档、API、价格、论文或一手说明。 | 补官方文档 / OpenAI Docs / PDF。 |\n| 反证和替代方案 | 待定 | weak | 需要成熟替代、失败案例或低意愿证据。 | 补 Scite / Readwise / Zotero / 竞品文档。 |\n| 结论许可 | 待定 | weak | weak 只能支持继续研究或低成本内部实验。 | 证据未升到 medium/strong 前不写产品化。 |",
-        "stage_plugin_rows": "| signal | Browser / Chrome / Record & Replay | 待定 | 待定 | 待定 | 待定 |\n| research | GitHub / last30days / OpenAI Docs / Hugging Face / Readwise / Scite / Semrush / Similarweb / Brand24 / Zotero / Browser / Chrome / Documents / PDF / Spreadsheets / Data Visualization | 待定 | 待定 | 待定 | 待定 |\n| debate | Browser / Chrome / Documents / PDF | 待定 | 待定 | 待定 | 待定 |\n| validation | Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 待定 | 待定 | 待定 | 待定 |\n| artifact | Documents / PDF / Spreadsheets / Presentations / HyperFrames / Data Visualization | 待定 | 待定 | 待定 | 待定 |\n| publication | Browser / Chrome | 待定 | 待定 | 待定 | 待定 |\n| feedback | Chrome / Browser / Spreadsheets / Record & Replay | 待定 | 待定 | 待定 | 待定 |\n| asset | Documents / PDF / Spreadsheets / Presentations / Record & Replay / Browser | 待定 | 待定 | 待定 | 待定 |\n| flow-review | Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 待定 | 待定 | 待定 | 待定 |",
+        "candidate_capability_rows": "| Skill: signalproof | 是 | 是 | 中 | repo 级 skill 提供本地流程规则。 | 保留。 |\n| Skill: personal-opportunity-os | 视主题而定 | 按需评估 | 弱 | 仅当上层个人机会系统方向会影响判断时使用。 | 按主题决定。 |\n| Skill: last30days | 视研究主题而定 | 按需评估 | 弱 | 真实趋势 case 需要运行；内部结构 case 可跳过但要写原因。 | 对真实趋势 case 用较新 Python 运行。 |\n| Browser | 视产物而定 | 按需评估 | 弱 | 适合验证网页、公开页面或本地报告预览。 | 有网页验收目标时使用。 |\n| Computer Use | 视 GUI 而定 | 按需评估 | 弱 | 适合 GUI-only 验收。 | 有 GUI 验收目标时使用。 |\n| Plugin | 是 | 按需评估 | 弱 | 先判断插件是否会改变判断或验收产物。 | 按 case 选择，不默认全跑。 |\n| MCP | 视证据源而定 | 按需评估 | 弱 | 可接官方文档、GitHub 或 Context7 等能力。 | 需要结构化外部来源时使用。 |",
+        "tool_research_rows": "| 公开讨论 | 未覆盖 | weak | 需要目标用户原话、抱怨、采用或反对意见；X API credits 默认暂缺但非阻断。 | 优先补 last30days / HN / Reddit / YouTube / GitHub；必要时再提醒补 X。 |\n| 项目和数据 | 未覆盖 | weak | 需要 GitHub、下载、访问、流量或产品指标。 | 补 GitHub / Hugging Face / Similarweb / Semrush。 |\n| 官方和一手资料 | 未覆盖 | weak | 需要官方文档、API、价格、论文或一手说明。 | 补官方文档 / OpenAI Docs / PDF。 |\n| 反证和替代方案 | 未覆盖 | weak | 需要成熟替代、失败案例或低意愿证据。 | 补 Scite / Readwise / Zotero / 竞品文档。 |\n| 结论许可 | 已覆盖 | weak | weak 只能支持继续研究或低成本内部实验。 | 证据未升到 medium/strong 前不写产品化。 |",
+        "stage_plugin_rows": "| signal | Browser / Chrome / Record & Replay | 按需评估 | weak | 尚未改变判断 | 未使用原因需按 case 补写 |\n| research | GitHub / last30days / OpenAI Docs / Hugging Face / Readwise / Scite / Semrush / Similarweb / Brand24 / Zotero / Browser / Chrome / Documents / PDF / Spreadsheets / Data Visualization | 按需评估 | weak | 尚未改变判断 | 未使用原因需按 case 补写 |\n| debate | Browser / Chrome / Documents / PDF | 按需评估 | weak | 尚未改变判断 | 未使用原因需按 case 补写 |\n| validation | Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 按需评估 | weak | 尚未改变判断 | 未使用原因需按 case 补写 |\n| artifact | Documents / PDF / Spreadsheets / Presentations / HyperFrames / Data Visualization | 按需评估 | weak | 尚未改变判断 | 未使用原因需按 case 补写 |\n| publication | Browser / Chrome | 未使用 | weak | 未发布 | 有公开 URL 时再验收 |\n| feedback | Chrome / Browser / Spreadsheets / Record & Replay | 未使用 | weak | 真实反馈为空 | 外部反馈恢复后再用 |\n| asset | Documents / PDF / Spreadsheets / Presentations / Record & Replay / Browser | 按需评估 | weak | 尚未改变判断 | 需要资料包或流程录制时再用 |\n| flow-review | Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 按需评估 | weak | 尚未改变判断 | 有报告预览或 GUI 验收目标时再用 |",
     },
     "internal-audit": {
         "case_type_label": "内部流程审计",
@@ -317,8 +417,11 @@ CASE_TYPE_PRESETS = {
         "decision_permission": "当前许可：继续本地流程优化，并把高价值缺口落到脚本、模板、文档或 skill。不得写成市场验证、插件全部授权成功或 SaaS 可行。",
         "next_evidence_steps": "- 对新增占位检查运行本次 case 严格检查。\n- 更新模板和协议说明，避免内部审计默认套外部机会口径。\n- 保留真实 feedback 为空的边界。",
         "feedback_empty_reason": "本 case 是内部流程优化，没有发布、访谈、公开评论或产品指标；真实反馈为空。",
-        "validation_object": "SignalProof 是否能把“报告里发现的缺口”升级成脚本、模板或文档中的可复用机制。",
+        "validation_object": "SignalProof 是否能把 Andrew Ng 的 agentic coding、developer feedback、external feedback 三个 loop 嵌入本地协议，并保持 published != validated 的证据边界。",
         "validation_method_steps": "1. 复核最近自审 case 和报告。\n2. 修改 `scripts/signalproof.py`、模板、协议或 skill。\n3. 新建或更新本次内部审计 case。\n4. 运行 `python3 scripts/signalproof.py check-plugin-drift`。\n5. 运行 `python3 scripts/signalproof.py check-case <case-slug> --strict`。\n6. 运行 `python3 scripts/signalproof.py export-all`、`check-all`、`check-goal --min-cases 5` 和 `git diff --check`。",
+        "product_spec": "- 目标用户：SignalProof 维护者和高频使用 Codex/Claude Code 的个人工作流实践者。\n- 目标任务：把高不确定性的个人工作压成证据、Spec、AI 执行、反馈、决策和资产。\n- 非目标：不做 Web App、SaaS dashboard、workflow builder、通用知识库或自动雷达。\n- 成功标准：新 case 能声明 case_intent 与 loop_profile；validation.md 能承接 Product Spec 和 Eval Set；flow-review.md 能审计 loop 是否转动。",
+        "eval_set": "- 通过样例：`init-case --case-intent workflow-improvement` 生成 signal.md loop frontmatter、validation.md Product Spec/Eval Set、flow-review.md loop review。\n- 失败样例：只生成旧线性 case 文件，没有 loop_profile，或把 external_feedback_loop=skipped-with-reason 写成验证成功。\n- 回归检查：`check-case --strict`、`check-all`、`check-assets`、`export-all`、`check-plugin-drift`。",
+        "agentic_acceptance": "- agentic loop 本轮为 optional，因为产物是协议、模板和脚本，而不是独立产品功能。\n- 如果后续 case 选择 `case_intent=product-iteration`，agentic_loop 必须为 required，并要求 Product Spec 与 Eval Set 同时存在。",
         "artifact_summary": "本 case 的产物是一次 SignalProof 工作流机制优化：脚本能识别未完成占位标记，模板能区分内部流程审计与外部机会验证。",
         "asset_type": "内部流程审计和机制优化案例。",
         "asset_reusable_content": "- 严格检查未完成占位标记的脚本规则。\n- `internal-audit` case 类型。\n- 中文 case 记录模板。\n- 复核原报告时区分“已落地机制”和“仍是建议”的判断口径。",
@@ -330,6 +433,36 @@ CASE_TYPE_PRESETS = {
         "candidate_capability_rows": "| Skill: signalproof | 是 | 是 | 强 | 已读取 repo skill，确认必需 case 文件、插件记录、真实反馈和验证命令规则。 | 保留为默认入口。 |\n| Skill: user-working-profile | 是 | 是 | 强 | 已读取用户偏好，确认中文、边界、证据和少追问多执行。 | 保留。 |\n| Memory | 是 | 是 | 中 | 用于复核历史 SignalProof 方向和插件审计口径；只作上下文，不替代当前仓库证据。 | 需要历史口径时轻量使用。 |\n| last30days | 条件相关 | 未使用 | 中 | 本 case 是内部工作流机制审计，外部趋势不会改变脚本和模板判断。 | 真实外部机会 case 再运行。 |\n| Browser / Chrome | 条件相关 | 未使用 | 中 | 本轮没有网页、登录态或报告预览验收目标。 | 有页面验收时再用。 |\n| Computer Use | 条件相关 | 未使用 | 中 | 本轮没有 GUI-only 验收目标。 | 有本地 App 操作验收时再用。 |\n| Record & Replay | 条件相关 | 未使用 | 中 | 本轮没有用户演示录制目标。 | 需要沉淀操作流程时再用。 |\n| Documents / PDF / Spreadsheets / Presentations | 条件相关 | 未使用 | 中 | 本轮产物是 Markdown、模板和 Python 脚本。 | 正式资料包或格式产物再用。 |\n| Plugin / MCP | 是 | 使用本地脚本和已读插件流程文档 | 中 | 记录安装、暴露、授权、证据质量分层；没有默认全跑外部 connector。 | 具体 case 再做只读探针。 |",
         "tool_research_rows": "| 公开讨论 | 覆盖当前用户任务，未做外部扩散扫描 | weak | 本轮是内部流程审计，公开讨论不构成市场证据。 | 真实机会 case 再补。 |\n| 项目和数据 | 已覆盖仓库文件、脚本、模板、case 和 runs | strong | 可判断本地机制是否真实改变。 | 继续用脚本验证。 |\n| 官方和一手资料 | 已覆盖 AGENTS、repo skill、协议和质量门文档 | strong | 本轮按用户指定文档执行。 | 官方联网事实变更时再查。 |\n| 反证和替代方案 | 已覆盖原报告缺口、strict 漏检占位风险、connector 授权缺口 | medium | 反证足以支持新增脚本 gate。 | 后续 connector case 再探针。 |\n| 结论许可 | 已覆盖 | medium | 只允许内部机制优化和低成本实验。 | 不写市场验证。 |",
         "stage_plugin_rows": "| signal | Browser / Chrome / Record & Replay | 未使用 | 中 | 信号来自当前会话和本地仓库，不需要网页、登录态或录制。 | 保留为条件候选。 |\n| research | GitHub / last30days / OpenAI Docs / Browser / Documents / PDF / Spreadsheets | 部分使用本地文件和记忆；未调用外部插件 | 中 | 本轮按用户指定本地文档复核，外部趋势不会改变内部脚本判断。 | 真实外部机会 case 再跑。 |\n| debate | Browser / Chrome / Documents / PDF | 未使用 | 中 | 反证来自本地 case、diff 和脚本行为。 | 外部反证依赖页面时再用。 |\n| validation | 本地脚本 / Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 使用本地脚本 | 强 | 本轮产物是 Markdown 和 Python 脚本，不需要 GUI 或格式插件。 | 按最终命令验证。 |\n| artifact | Documents / PDF / Spreadsheets / Presentations / HyperFrames / Data Visualization | 未使用 | 中 | 产物是本地 Markdown、模板和脚本。 | 正式资料包再启用。 |\n| publication | Browser / Chrome | 未使用 | 弱 | 未发布。 | 有公开 URL 时再验收。 |\n| feedback | Chrome / Browser / Spreadsheets / Record & Replay | 未使用 | 弱 | 真实反馈为空。 | 外部反馈恢复后再用。 |\n| asset | Documents / PDF / Spreadsheets / Presentations / Record & Replay / Browser | 未使用 | 中 | 资产沉淀为本地规则和 case。 | 需要演示或资料包时再用。 |\n| flow-review | 本地脚本 / Browser / Computer Use / Documents / PDF / Spreadsheets / Presentations | 使用本地脚本 | 强 | 指定验证命令足以验收本轮机制。 | 保留脚本 gate。 |",
+    },
+    "plugin-test": {
+        "case_type_label": "插件流程试跑",
+        "why_enter_flow": "- 这条信号用于验证某个 Codex skill、plugin、MCP 或本地工具是否能改变判断、减少不确定性或验收产物。\n- 本 case 只能证明工具调用路径、授权缺口、失败降级或产物验收能力，不证明外部机会成立。",
+        "initial_users": "- SignalProof 维护者。\n- 需要把工具能力纳入个人工作流，但不想把插件安装状态误写成证据的人。",
+        "current_boundary": "- 不声称市场验证。\n- 不默认产品化。\n- 不默认全跑插件。\n- 插件安装、状态快照或 marketplace 可见性不等于工具可用或证据成立。",
+        "research_process": "- 读取插件说明、repo 协议、能力矩阵和迁移文档。\n- 做最小只读探针，记录成功、失败、阻塞和降级路径。\n- 判断工具结果是否改变本 case 的判断，而不是只记录调用成功。",
+        "source_coverage_rows": "| 公开讨论 | 当前未覆盖 | 未覆盖 | weak | 本 case 目标不是市场判断。 |\n| 项目和数据 | 插件 manifest、能力矩阵、状态快照、只读探针 | 已覆盖 | medium | 能支持工具流程判断。 |\n| 官方和一手资料 | 插件 skill、官方文档或 repo 文档 | 按需覆盖 | medium | 需要记录版本和入口。 |\n| 反证和替代方案 | 授权失败、工具未暴露、降级命令、本地脚本替代 | 已覆盖 | medium | 能避免工具崇拜。 |",
+        "cross_validation": "- 谁在说：当前 case、插件文档、脚本输出或只读探针。\n- 说什么：工具是否可用、结果是否相关、失败如何降级。\n- 在哪里说：tool-ledger、process-log、flow-review。\n- 有没有反证：插件可能未授权、未暴露、结果弱或不会改变判断。\n- 能支持什么结论：只能支持保留、条件使用、降级或移出候选能力。",
+        "counterevidence": "- 插件可见但账号未授权。\n- 插件调用成功但结果不相关。\n- 本地脚本或官方文档已经足够，不需要额外 connector。",
+        "evidence_grade": "当前证据等级：medium。工具路径和本地探针可以支持流程判断；外部用户需求仍为 weak。",
+        "decision_permission": "当前许可：低成本内部实验或条件保留工具。不得写成市场验证或产品化结论。",
+        "next_evidence_steps": "- 做最小只读探针。\n- 把失败和降级写入工具账本。\n- 判断是否改变本 case 决策。",
+        "feedback_empty_reason": "本 case 是工具流程试跑，没有真实目标用户反馈；真实反馈为空。",
+        "validation_object": "候选工具是否能改变判断、减少不确定性或验收产物。",
+        "validation_method_steps": "1. 读取插件 skill 或官方文档。\n2. 运行最小只读探针。\n3. 保存成功输出或失败错误。\n4. 在 `tool-ledger.md` 判断结果质量。\n5. 运行 `python3 scripts/signalproof.py check-case <case-slug> --strict`。",
+        "product_spec": "- 目标用户：SignalProof 维护者。\n- 目标任务：判断候选工具是否值得纳入某个阶段。\n- 非目标：不证明市场需求，不扩大插件治理范围。\n- 成功标准：工具结果质量、失败原因、降级路径和是否改变判断都被记录。",
+        "eval_set": "- 通过样例：工具探针有原始结果或明确失败原因，并写入 `tool-ledger.md`。\n- 失败样例：只写“已安装”或“已调用”，不判断结果质量。\n- 回归检查：`check-case --strict` 不允许模板占位和过度声称。",
+        "agentic_acceptance": "- agentic loop 本轮为 optional；只有工具用于构建或验收产物时才启动。",
+        "artifact_summary": "本 case 的产物是候选工具的流程试跑记录、失败降级路径和可复用工具选择规则。",
+        "asset_type": "工具评估和能力治理案例。",
+        "asset_reusable_content": "- 工具选择规则。\n- 只读探针记录。\n- 失败降级路径。\n- 是否改变判断的标准。",
+        "decision_default": "条件保留、降级使用或移出候选能力。",
+        "decision_reason": "- 工具只有在改变判断、减少不确定性或验收产物时才有价值。\n- 插件治理只作为候选能力治理，不作为证据本身。",
+        "decision_next_steps": "- 若工具结果强，写入对应阶段候选能力。\n- 若结果弱或失败，记录降级路径。\n- 若需要真实数据授权，明确交给用户授权或暂停。",
+        "decision_boundary": "工具试跑不能证明外部机会成立，也不能替代真实反馈。",
+        "report_boundary": "本报告只证明工具流程状态，不证明市场需求、用户采用或产品化可行性。",
+        "candidate_capability_rows": "| Skill: signalproof | 是 | 是 | 强 | 提供本地流程规则。 | 保留。 |\n| Plugin / MCP | 是 | 按本 case 选择 | 待评估 | 候选工具是本 case 目标。 | 只做最小必要探针。 |\n| Browser / Chrome | 条件相关 | 按需 | 中 | 页面或登录态验收时使用。 | 需要时再启用。 |\n| 本地脚本 | 是 | 是 | 强 | 用于确定性检查和降级。 | 保留。 |",
+        "tool_research_rows": "| 来源覆盖 | 已覆盖工具文档和本地探针 | medium | 本 case 只判断工具流程。 | 需要外部机会时另开 case。 |\n| 交叉验证 | 已覆盖工具结果和降级路径 | medium | 不把调用成功写成证据合格。 | 继续记录失败原因。 |\n| 反证 | 已覆盖授权、未暴露、弱结果风险 | medium | 防止工具崇拜。 | 必要时移出候选。 |\n| 证据等级 | 已覆盖 | medium | 支持内部工具决策。 | 不支持市场判断。 |\n| 结论许可 | 已覆盖 | medium | 只能保留、降级或暂停工具。 | 不写产品化。 |",
+        "stage_plugin_rows": "| signal | Browser / Chrome / Record & Replay | 按需 | 中 | 信号可能来自插件状态或页面。 | 保留条件候选。 |\n| research | 插件 skill / 官方文档 / 本地脚本 | 按需 | medium | 需要确认入口和限制。 | 记录原始来源。 |\n| validation | 本地脚本 / Browser / Computer Use | 按需 | medium | 只读探针或产物验收。 | 失败先记账。 |\n| feedback | Chrome / Browser / Spreadsheets | 未使用 | weak | 真实反馈为空。 | 有真实渠道再用。 |\n| flow-review | 本地脚本 | 使用 | strong | 检查工具是否改变判断。 | 保留 gate。 |",
     },
 }
 
@@ -503,6 +636,14 @@ def required_files_for(case_dir: Path) -> list[str]:
     return REQUIRED_FILES
 
 
+def default_case_intent(case_type: str) -> str:
+    return CASE_TYPE_DEFAULT_INTENT.get(case_type, "external-opportunity")
+
+
+def loop_defaults_for(case_intent: str) -> dict[str, str]:
+    return CASE_INTENT_LOOP_DEFAULTS.get(case_intent, CASE_INTENT_LOOP_DEFAULTS["external-opportunity"])
+
+
 def diagnose(_: argparse.Namespace | None = None) -> int:
     result = {
         "repo": str(ROOT),
@@ -587,6 +728,25 @@ def capability_matrix(_: argparse.Namespace | None = None) -> int:
                 **row
             )
         )
+    lines.extend([
+        "",
+        "## AI Native Work Loop 能力视角",
+        "",
+        "这些 loop 来自 Andrew Ng 对 0-to-1 software building 的拆分。SignalProof 只把它们作为本地协议检查点，不把项目扩成 workflow builder。",
+        "",
+        "| Loop | 目标 | 节奏 | 默认能力 | 写入位置 |",
+        "| --- | --- | --- | --- | --- |",
+    ])
+    for row in LOOP_CAPABILITY_MATRIX:
+        lines.append(
+            "| {loop} | {purpose} | {cadence} | {default_capabilities} | {writes_to} |".format(
+                **row
+            )
+        )
+    lines.extend([
+        "",
+        "边界：插件和 agent 能力只是候选能力。只有结果改变判断、减少不确定性或验收产物时，才算 loop 产生证据价值。",
+    ])
     text = "\n".join(lines) + "\n"
     write_text(RUNS / f"{date.today().isoformat()}-codex-capability-matrix.md", text)
     print(text)
@@ -974,11 +1134,16 @@ def init_case(args: argparse.Namespace) -> int:
     case_dir = CASES / slug
     case_dir.mkdir(parents=True, exist_ok=True)
     preset = CASE_TYPE_PRESETS.get(args.case_type, CASE_TYPE_PRESETS["external-opportunity"])
+    case_intent = args.case_intent or default_case_intent(args.case_type)
+    loop_defaults = loop_defaults_for(case_intent)
     context = {
         "slug": slug,
         "title": args.title,
         "case_type": args.case_type,
+        "case_intent": case_intent,
         "case_mode": args.case_mode,
+        "loop_profile": "ai-work-loop-v1",
+        **loop_defaults,
         "signal": args.signal or args.title,
         "created_at": date.today().isoformat(),
         "assumed_feedback": "yes" if args.assumed_feedback else "no",
@@ -1037,6 +1202,8 @@ def check_case(case_dir: Path) -> CaseCheck:
     tool_ledger_path = case_dir / "tool-ledger.md"
     process_log_path = case_dir / "process-log.md"
     research_path = case_dir / "research.md"
+    signal_path = case_dir / "signal.md"
+    validation_path = case_dir / "validation.md"
     assumed_path = case_dir / "assumed-feedback.md"
 
     if feedback_path.exists():
@@ -1074,6 +1241,12 @@ def check_case(case_dir: Path) -> CaseCheck:
             if not any(has_phrase(research, pattern) for pattern in patterns):
                 warnings.append(f"research.md missing research gate term: {term}")
         check_research_frontmatter(research, warnings)
+
+    if signal_path.exists():
+        signal = read_text(signal_path)
+        check_signal_frontmatter(signal, warnings)
+        if validation_path.exists():
+            check_loop_validation_requirements(signal, read_text(validation_path), warnings)
 
     if feedback_path.exists():
         feedback = read_text(feedback_path)
@@ -1130,6 +1303,43 @@ def check_research_frontmatter(text: str, warnings: list[str]) -> None:
         source_or_quote_count = (primary_sources or 0) + (external_quotes or 0)
         if source_or_quote_count < 1:
             warnings.append("research.md `evidence_grade=strong` requires primary_source_count + external_quote_count >= 1")
+
+
+def check_signal_frontmatter(text: str, warnings: list[str]) -> None:
+    fields = parse_frontmatter(text)
+    missing = missing_frontmatter_fields(fields, STRUCTURED_SIGNAL_FIELDS)
+    if missing:
+        warnings.append("signal.md missing loop frontmatter field(s): " + ", ".join(missing))
+        return
+
+    case_intent = normalize_scalar(fields["case_intent"])
+    loop_profile = normalize_scalar(fields["loop_profile"])
+    agentic_loop = normalize_scalar(fields["agentic_loop"])
+    developer_feedback_loop = normalize_scalar(fields["developer_feedback_loop"])
+    external_feedback_loop = normalize_scalar(fields["external_feedback_loop"])
+    asset_loop = normalize_scalar(fields["asset_loop"])
+
+    if case_intent not in ALLOWED_CASE_INTENTS:
+        warnings.append("signal.md frontmatter `case_intent` has unsupported value")
+    if loop_profile not in ALLOWED_LOOP_PROFILES:
+        warnings.append("signal.md frontmatter `loop_profile` must be ai-work-loop-v1")
+    if agentic_loop not in ALLOWED_AGENTIC_LOOP_STATUS:
+        warnings.append("signal.md frontmatter `agentic_loop` must be required / optional / skipped")
+    if developer_feedback_loop not in ALLOWED_DEVELOPER_FEEDBACK_LOOP_STATUS:
+        warnings.append("signal.md frontmatter `developer_feedback_loop` must be required / optional / skipped")
+    if external_feedback_loop not in ALLOWED_EXTERNAL_FEEDBACK_LOOP_STATUS:
+        warnings.append("signal.md frontmatter `external_feedback_loop` must be required / delayed / skipped-with-reason")
+    if asset_loop not in ALLOWED_ASSET_LOOP_STATUS:
+        warnings.append("signal.md frontmatter `asset_loop` must be required / optional / skipped")
+
+
+def check_loop_validation_requirements(signal_text: str, validation_text: str, warnings: list[str]) -> None:
+    fields = parse_frontmatter(signal_text)
+    agentic_loop = normalize_scalar(fields.get("agentic_loop", ""))
+    if agentic_loop == "required":
+        for heading in ["Product Spec", "Eval Set"]:
+            if not re.search(r"^##\s+" + re.escape(heading) + r"\s*$", validation_text, flags=re.MULTILINE):
+                warnings.append(f"validation.md missing `{heading}` while agentic_loop=required")
 
 
 def check_feedback_frontmatter(text: str, decision: str, errors: list[str], warnings: list[str]) -> None:
@@ -1701,6 +1911,7 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument("--slug")
     init.add_argument("--signal")
     init.add_argument("--case-type", default="external-opportunity", choices=sorted(CASE_TYPE_PRESETS))
+    init.add_argument("--case-intent", choices=sorted(ALLOWED_CASE_INTENTS), help="Work intent: product/content iteration, workflow improvement, tool evaluation, learning-to-asset, or external opportunity.")
     init.add_argument("--case-mode", default="full", choices=["full", "lite"], help="Use lite for fast signal-to-decision screening; full for complete SignalProof proof cases.")
     init.add_argument("--assumed-feedback", action="store_true")
     init.add_argument("--force", action="store_true")

@@ -11,6 +11,18 @@ gate: passed
 
 {{validation_object}}
 
+## Product Spec
+
+{{product_spec}}
+
+## Eval Set
+
+{{eval_set}}
+
+## Agentic Build Acceptance
+
+{{agentic_acceptance}}
+
 ## 验证方式
 
 {{validation_method_steps}}

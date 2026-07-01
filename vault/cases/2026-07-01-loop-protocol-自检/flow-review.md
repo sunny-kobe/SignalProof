@@ -1,8 +1,8 @@
 ---
 type: flow_review
 status: completed
-updated_at: {{created_at}}
-case_stage: {{case_mode}}-loop
+updated_at: 2026-07-01
+case_stage: full-loop
 gate: passed
 ---
 
@@ -45,10 +45,10 @@ gate: passed
 
 | Loop | 预期状态 | 本轮检查 | 结论 |
 | --- | --- | --- | --- |
-| agentic coding | {{agentic_loop}} | `validation.md` 是否给出 Product Spec、Eval Set 和 Agentic Build Acceptance。 | 只有 spec 和 eval 可执行时，才让 AI 长时间构建或测试。 |
-| developer feedback | {{developer_feedback_loop}} | `debate.md`、`decision.md` 和本轮人工判断是否修正方向。 | 人类上下文优势必须进入决策，不能只依赖 agent 输出。 |
-| external feedback | {{external_feedback_loop}} | `feedback.md` 是否有真实发布、访谈、评论、issue、指标或明确跳过原因。 | `published` 不能自动写成 `externally-observed` 或 validated。 |
-| asset/meta | {{asset_loop}} | `asset.md` 和 `vault/assets/registry.md` 是否能承接复用。 | 没有后续引用时只能算资产候选。 |
+| agentic coding | optional | `validation.md` 是否给出 Product Spec、Eval Set 和 Agentic Build Acceptance。 | 只有 spec 和 eval 可执行时，才让 AI 长时间构建或测试。 |
+| developer feedback | required | `debate.md`、`decision.md` 和本轮人工判断是否修正方向。 | 人类上下文优势必须进入决策，不能只依赖 agent 输出。 |
+| external feedback | skipped-with-reason | `feedback.md` 是否有真实发布、访谈、评论、issue、指标或明确跳过原因。 | `published` 不能自动写成 `externally-observed` 或 validated。 |
+| asset/meta | required | `asset.md` 和 `vault/assets/registry.md` 是否能承接复用。 | 没有后续引用时只能算资产候选。 |
 
 ## 下一轮 Loop 决策
 

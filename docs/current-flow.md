@@ -2,6 +2,8 @@
 
 这份文档记录 `SignalProof 个人证据协议` 现在每个流程是怎么跑的。V0.2 的核心是本地 Markdown vault + Python 标准库脚本；插件治理降级为候选能力治理，不再制造“系统 ready”的错觉。
 
+V0.3 起，流程从单线条 `信号 -> 研究 -> 决策 -> 资产` 扩展为主链路加 loop 检查点：agentic coding、developer feedback、external feedback 和 asset/meta。它仍是本地协议，不是通用 workflow builder。
+
 当前不做 Web App、SaaS dashboard、workflow builder、通用知识库、自动雷达、n8n/Dify、Notion/Obsidian 集成。
 
 ## 1. 能力诊断
@@ -140,6 +142,17 @@ python3 scripts/signalproof.py plugin-status
 
 任何插件调用后都要写结果质量：强 / 中 / 弱 / 失败 / 阻塞。工具被调用过，不等于证据合格。
 
+## 3.4 AI Native Work Loop 分层
+
+| Loop | 节奏 | 触发条件 | 写入位置 |
+| --- | --- | --- | --- |
+| agentic coding | 分钟级 | 需要 AI 根据 Product Spec 和 Eval Set 构建、测试、验收。 | `validation.md`、`artifact.md`、`tool-ledger.md` |
+| developer feedback | 几十分钟到数小时 | 用户需要用上下文优势修正方向、UI、内容、边界或下一轮 spec。 | `debate.md`、`decision.md`、`flow-review.md` |
+| external feedback | 小时到周级 | 有发布、访谈、alpha、A/B、评论、issue 或真实指标。 | `feedback.md`、`day2-execution.md` |
+| asset/meta | 每个阶段结束 | 需要把本轮产物沉淀为模板、检查表、脚本、skill、资料包或资产账本。 | `asset.md`、`vault/assets/registry.md` |
+
+`signal.md` 的 loop frontmatter 只说明本轮怎么跑；它不能替代研究质量、真实反馈或资产复用证据。
+
 ## 4. 创建 Case
 
 命令：
@@ -159,6 +172,14 @@ python3 scripts/signalproof.py init-case "<title>" --case-mode lite
 - 是否调用插件由阶段能力计划决定。
 - full 升级必须在 `decision.md` 说明理由，不能为了完整而完整。
 - lite case 的资产被发布后，先在发布资产、发布台账、`asset.md` 或 `decision.md` 记录 URL 与状态；不要因为有发布动作就补齐 full-only 文件。只有满足 full 升级硬条件时，才补 `feedback.md` 等完整 proof 文件。
+
+新增参数：
+
+```bash
+python3 scripts/signalproof.py init-case "<title>" --case-type internal-audit --case-intent workflow-improvement
+```
+
+`case_type` 表示证据边界；`case_intent` 表示工作意图。默认映射是 external-opportunity -> external-opportunity、internal-audit -> workflow-improvement、plugin-test -> tool-evaluation。`case_intent` 支持 product/content iteration、workflow improvement、tool evaluation 和 learning-to-asset，但不会降低 published-not-validated 边界。
 
 ## 5. Seed 示例案例
 

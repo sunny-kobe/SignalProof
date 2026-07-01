@@ -4,6 +4,8 @@
 
 SignalProof 当前执行名是 `SignalProof 个人证据协议`。它是本地 Markdown vault + Python 标准库脚本 + Codex 执行习惯组成的个人判断协议，不是独立 App、SaaS dashboard、workflow builder、通用知识库、自动雷达或插件平台。
 
+V0.3 起，SignalProof 也是一个克制版 `AI Native Work Loop Protocol`：把高不确定性的个人工作压成证据、Spec、AI 执行、真实反馈、明确决策和可复用资产。这里的“通用”只表示可用于产品迭代、内容迭代、工作流优化、工具评估和学习资产化，不表示要做通用工作流平台。
+
 `Personal Opportunity OS` 是长期背景叙事，只解释为什么要把信号、证据、决策和资产放在同一条链路里；它不作为 V0.2 的执行口号，也不扩展当前仓库范围。
 
 ```text
@@ -28,6 +30,30 @@ SignalProof = 个人证据协议、模板、vault、脚本、资产复用账本
 
 资产沉淀不只是在 `asset.md` 写“可复用”。真正可复用的资产必须登记到 `vault/assets/registry.md`，并在后续 case 使用时更新 `last_used_by`，否则只能算资产候选。
 
+## AI Native Work Loop
+
+Andrew Ng 的 3 个 loop 嵌入 SignalProof 后，形成主链路上的 4 个检查点：
+
+| Loop | SignalProof 里的作用 | 写入位置 |
+| --- | --- | --- |
+| agentic coding loop | 用 Product Spec 和 Eval Set 驱动 AI 构建、测试和回归。 | `validation.md`、`artifact.md`、`tool-ledger.md` |
+| developer feedback loop | 用户用上下文优势修正方向、边界、UI、内容和下一轮 spec。 | `debate.md`、`decision.md`、`flow-review.md` |
+| external feedback loop | 通过发布、访谈、alpha、A/B、评论、issue 或指标回收真实反馈。 | `feedback.md`、`day2-execution.md`、`tool-ledger.md` |
+| asset/meta loop | 把有效输出沉淀为模板、检查表、脚本、skill、资料包或资产账本条目。 | `asset.md`、`vault/assets/registry.md`、`flow-review.md` |
+
+每个新 case 的 `signal.md` 必须声明：
+
+```yaml
+case_intent: workflow-improvement
+loop_profile: ai-work-loop-v1
+agentic_loop: optional
+developer_feedback_loop: required
+external_feedback_loop: skipped-with-reason
+asset_loop: required
+```
+
+`agentic_loop=required` 时，`validation.md` 必须包含 `Product Spec` 和 `Eval Set`。这些字段只说明本轮如何跑 loop，不能替代研究证据、真实反馈或资产复用证据。
+
 ## Case 类型
 
 默认 case 类型是 `external-opportunity`，用于真实外部机会初筛。内部流程审计、工作流优化、插件流程复核和二次审视类任务使用：
@@ -37,6 +63,27 @@ python3 scripts/signalproof.py init-case "<标题>" --case-type internal-audit
 ```
 
 `internal-audit` 只能支持本地机制改进和流程决策，不能写成外部市场验证。`plugin-test` 只能证明插件调用路径、授权缺口或产物验收能力。`external-opportunity` 才能进入外部机会判断，但也必须区分 published、observed feedback 和 validated。
+
+## Case Intent
+
+`case_type` 表示证据边界；`case_intent` 表示本轮工作意图。允许值：
+
+- `external-opportunity`
+- `product-iteration`
+- `content-iteration`
+- `workflow-improvement`
+- `tool-evaluation`
+- `learning-to-asset`
+
+默认映射：
+
+| case_type | 默认 case_intent |
+| --- | --- |
+| external-opportunity | external-opportunity |
+| internal-audit | workflow-improvement |
+| plugin-test | tool-evaluation |
+
+intent 不改变证据门槛。比如 `content-iteration` 已发布文章，也只能写成 `published`；只有真实目标人反馈、真实评论、真实指标或真实任务证据出现后，才能升级到 observed feedback。
 
 ## Case Mode
 
